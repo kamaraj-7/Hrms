@@ -4,21 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Human Resource Management — Enterprise Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
   :root {
     --app-blue: #3898ec;
+    --app-blue-hover: #2680d0;
     --sidebar-bg: #2d3340;
-    --sidebar-active: #3b82f6;
     --sidebar-hover: #373e4d;
     --sidebar-text: #a4b0c2;
+    --sidebar-active: #3b82f6;
     --border-color: #e5e9f0;
     --bg-main: #f5f7fb;
     --text-primary: #333333;
     --text-muted: #778ca3;
     --card-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    --green: #22c55e;
+    --red: #ef4444;
+    --amber: #f59e0b;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,45 +30,42 @@
     font-family: 'Open Sans', sans-serif;
     background: #eef1f6;
     color: var(--text-primary);
+    min-height: 100vh;
+    padding: 10px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 12px;
-    min-height: 100vh;
   }
 
-  /* App Window Container */
+  /* App Window Shell */
   .window-container {
     width: 100%;
     max-width: 1440px;
     background: #ffffff;
     border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     border: 1px solid #d8dee8;
   }
 
-  /* Mac Window Top Bar */
+  /* Browser Header */
   .window-header {
-    height: 34px;
+    height: 32px;
     background: #ffffff;
     display: flex;
     align-items: center;
     padding: 0 14px;
     border-bottom: 1px solid var(--border-color);
   }
-  .window-dots {
-    display: flex;
-    gap: 7px;
-  }
+  .window-dots { display: flex; gap: 7px; }
   .dot { width: 11px; height: 11px; border-radius: 50%; }
   .dot.red { background: #ff5f56; }
   .dot.yellow { background: #ffbd2e; }
   .dot.green { background: #27c93f; }
 
-  /* App Navigation Bar */
+  /* App Bar */
   .app-header {
     height: 44px;
     background: #ffffff;
@@ -107,10 +108,7 @@
     border-bottom: 3px solid transparent;
     cursor: pointer;
   }
-  .device-btn.active {
-    color: var(--app-blue);
-    border-bottom-color: var(--app-blue);
-  }
+  .device-btn.active { color: var(--app-blue); border-bottom-color: var(--app-blue); }
   .app-quick-actions {
     display: flex;
     align-items: center;
@@ -127,16 +125,17 @@
   }
   .app-quick-actions a:hover { text-decoration: underline; }
 
-  /* Workspace Layout */
+  /* App Workspace */
   .app-body {
     display: flex;
     min-height: 720px;
     background: var(--bg-main);
   }
 
-  /* Left Sidebar */
+  /* Sidebar */
   .sidebar {
-    width: 215px;
+    width: 220px;
+    min-width: 220px;
     background: var(--sidebar-bg);
     color: var(--sidebar-text);
     display: flex;
@@ -149,9 +148,6 @@
     font-weight: 600;
     color: #f1f4f9;
     border-bottom: 1px solid #383f4f;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
   }
   .nav-menu {
     list-style: none;
@@ -162,49 +158,35 @@
   .nav-item {
     display: flex;
     align-items: center;
-    padding: 9px 16px;
+    padding: 10px 16px;
     font-size: 0.8rem;
     cursor: pointer;
     transition: background 0.15s ease;
     color: #b5c0d0;
-    position: relative;
     user-select: none;
   }
-  .nav-item:hover {
-    background: var(--sidebar-hover);
-    color: #ffffff;
-  }
-  .nav-item.active {
-    background: #3e8cee;
-    color: #ffffff;
-    font-weight: 600;
-  }
-  .nav-item i.nav-icon {
-    width: 20px;
-    font-size: 0.82rem;
-    margin-right: 8px;
-    text-align: center;
-  }
-  .nav-item .arrow {
-    margin-left: auto;
-    font-size: 0.65rem;
-    color: #6c798e;
-  }
+  .nav-item:hover { background: var(--sidebar-hover); color: #ffffff; }
+  .nav-item.active { background: #3e8cee; color: #ffffff; font-weight: 600; }
+  .nav-item i.nav-icon { width: 22px; font-size: 0.85rem; margin-right: 8px; }
+  .nav-item .arrow { margin-left: auto; font-size: 0.65rem; color: #6c798e; }
   .nav-item.active .arrow { color: #ffffff; }
 
-  /* Main Dashboard Panel */
+  /* Main View Area */
   .main-content {
     flex: 1;
-    padding: 16px 20px;
-    overflow-x: hidden;
+    padding: 18px 22px;
+    overflow-y: auto;
   }
+  .view-page { display: none; }
+  .view-page.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-  /* Top Stat KPI Cards */
+  /* KPI Cards */
   .kpi-row {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 14px;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
   .kpi-card {
     background: #ffffff;
@@ -224,11 +206,7 @@
     background: #3898ec;
     border-radius: 0 3px 3px 0;
   }
-  .kpi-details {
-    flex: 1;
-    text-align: center;
-    padding-left: 6px;
-  }
+  .kpi-details { flex: 1; text-align: center; padding-left: 6px; }
   .kpi-number {
     font-size: 2.1rem;
     font-weight: 300;
@@ -236,13 +214,9 @@
     line-height: 1;
     margin-bottom: 6px;
   }
-  .kpi-title {
-    font-size: 0.76rem;
-    color: #657488;
-    font-weight: 500;
-  }
+  .kpi-title { font-size: 0.76rem; color: #657488; font-weight: 500; }
 
-  /* Dashboard Cards Grid */
+  /* Grid Layouts */
   .charts-row {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -255,6 +229,7 @@
     border-radius: 4px;
     box-shadow: var(--card-shadow);
     padding: 16px;
+    position: relative;
   }
   .chart-header {
     display: flex;
@@ -262,20 +237,13 @@
     align-items: center;
     margin-bottom: 12px;
   }
-  .chart-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #3b4554;
-  }
-  .chart-toolbar {
-    display: flex;
-    gap: 4px;
-  }
+  .chart-title { font-size: 0.95rem; font-weight: 600; color: #3b4554; }
+  .chart-toolbar { display: flex; gap: 4px; }
   .tool-btn {
     background: #ffffff;
     border: 1px solid #d2d9e2;
     border-radius: 3px;
-    padding: 3px 8px;
+    padding: 4px 9px;
     font-size: 0.72rem;
     color: #556275;
     cursor: pointer;
@@ -285,7 +253,7 @@
   }
   .tool-btn:hover { background: #f8fafc; border-color: #bcc6d3; }
 
-  /* Bottom Full Width Card */
+  /* Bottom Panel */
   .bottom-chart-panel {
     background: #ffffff;
     border: 1px solid var(--border-color);
@@ -295,11 +263,11 @@
     position: relative;
   }
 
-  /* Custom Hover / Tooltip Card Overlay (as pictured) */
+  /* Mock Tooltip Card */
   .mock-tooltip {
     position: absolute;
     right: 180px;
-    bottom: 26px;
+    bottom: 22px;
     background: #ffffff;
     border: 1px solid #ff7b72;
     border-radius: 4px;
@@ -313,7 +281,7 @@
   .mock-tooltip strong { color: #111; }
   .mock-tooltip .note { color: #8892a0; font-size: 0.65rem; margin-top: 4px; }
 
-  /* Legend Container in Right Pie */
+  /* Pie Chart Legend Layout */
   .pie-legend-wrapper {
     display: flex;
     align-items: center;
@@ -326,34 +294,241 @@
     flex-direction: column;
     gap: 6px;
   }
-  .pie-check-item {
+  .pie-check-item { display: flex; align-items: center; gap: 6px; }
+  .badge-sq { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+  /* Tables & Lists */
+  .table-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: var(--card-shadow);
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+  .table-controls {
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
   }
-  .badge-sq {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
+  .search-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fbfcfe;
+    border: 1px solid #d4dbe4;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+  .search-input input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+  }
+  .btn-action {
+    background: var(--app-blue);
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s ease;
+  }
+  .btn-action:hover { background: var(--app-blue-hover); }
+  .btn-outline {
+    background: #ffffff;
+    border: 1px solid #cfd7e2;
+    color: #4b5563;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .btn-outline:hover { background: #f3f5f8; }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 9px 12px;
+    background: #f8fafc;
+    color: #556275;
+    font-weight: 600;
+    font-size: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #edf1f6;
+    color: #3b4554;
+    vertical-align: middle;
+  }
+  .data-table tr:hover td { background: #fcfdfe; }
+
+  .badge {
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 600;
     display: inline-block;
   }
+  .badge.joined, .badge.active, .badge.approved { background: #dcfce7; color: #15803d; }
+  .badge.resigned, .badge.rejected { background: #fee2e2; color: #b91c1c; }
+  .badge.pending, .badge.interview { background: #fef3c7; color: #b45309; }
+  .badge.onboarding { background: #dbeafe; color: #1d4ed8; }
 
-  /* Responsive Adjustments */
-  @media (max-width: 1080px) {
+  /* Attendance Box Grid */
+  .att-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .att-box {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .att-box.present { border-color: #22c55e; background: #f0fdf4; }
+  .att-box.absent { border-color: #ef4444; background: #fef2f2; }
+  .att-box.leave { border-color: #f59e0b; background: #fffbeb; }
+  .att-name { font-weight: 600; font-size: 0.8rem; margin: 4px 0 2px; }
+  .att-dept { font-size: 0.7rem; color: #778ca3; }
+  .att-actions { display: flex; gap: 4px; justify-content: center; margin-top: 8px; }
+  .att-btn {
+    border: none;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .att-btn.p { background: #e0f2fe; color: #0284c7; }
+  .att-btn.a { background: #fee2e2; color: #dc2626; }
+  .att-btn.l { background: #fef3c7; color: #d97706; }
+
+  /* Modals */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-card {
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 22px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+  }
+  .modal-header h3 { font-size: 1rem; color: #2d3748; }
+  .modal-close {
+    background: transparent;
+    border: none;
+    font-size: 1rem;
+    color: #94a3b8;
+    cursor: pointer;
+  }
+  .modal-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group.span2 { grid-column: span 2; }
+  .form-group label { font-size: 0.75rem; font-weight: 600; color: #4b5563; }
+  .form-group input, .form-group select, .form-group textarea {
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 7px 9px;
+    font-size: 0.8rem;
+    font-family: inherit;
+    outline: none;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--app-blue);
+  }
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 18px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+  }
+
+  /* Toast Notification */
+  .toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 3000;
+  }
+  .toast-box {
+    background: #1e293b;
+    color: #ffffff;
+    padding: 10px 18px;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: toastSlide 0.25s ease;
+  }
+  @keyframes toastSlide { from { transform: translateX(50px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* Responsive Rules */
+  @media (max-width: 1100px) {
     .kpi-row { grid-template-columns: repeat(3, 1fr); }
     .charts-row { grid-template-columns: 1fr; }
   }
   @media (max-width: 768px) {
-    .kpi-row { grid-template-columns: 1fr 1fr; }
     .sidebar { display: none; }
-    body { padding: 0; }
+    .kpi-row { grid-template-columns: 1fr 1fr; }
+    .device-switchers { display: none; }
   }
 </style>
 </head>
 <body>
 
 <div class="window-container">
-  <!-- Window Top Bar Controls -->
+  <!-- Mac Window Header -->
   <div class="window-header">
     <div class="window-dots">
       <span class="dot red"></span>
@@ -362,90 +537,68 @@
     </div>
   </div>
 
-  <!-- App Header Bar -->
+  <!-- Application Top Nav -->
   <div class="app-header">
     <div class="app-title-group">
       <div class="app-logo-badge"><i class="fa-solid fa-layer-group"></i></div>
-      <span>Human Resource Management</span>
+      <span id="appMainTitle">Human Resource Management</span>
     </div>
 
-    <!-- Responsive View Toggles -->
     <div class="device-switchers">
       <a class="device-btn active" title="Desktop View"><i class="fa-solid fa-desktop"></i></a>
       <a class="device-btn" title="Tablet View"><i class="fa-solid fa-tablet-screen-button"></i></a>
       <a class="device-btn" title="Mobile View"><i class="fa-solid fa-mobile-screen"></i></a>
     </div>
 
-    <!-- Utility Links -->
     <div class="app-quick-actions">
-      <a href="#"><i class="fa-regular fa-credit-card"></i> Subscription</a>
-      <a href="#"><i class="fa-solid fa-pen"></i> Edit this application</a>
-      <a href="#" style="color:#556275;"><i class="fa-regular fa-circle-question"></i> Help</a>
+      <a href="javascript:void(0)" onclick="showToast('Subscription active: Enterprise Plan')"><i class="fa-regular fa-credit-card"></i> Subscription</a>
+      <a href="javascript:void(0)" onclick="showToast('Edit Mode Enabled')"><i class="fa-solid fa-pen"></i> Edit this application</a>
+      <a href="javascript:void(0)" style="color:#556275;" onclick="showToast('Documentation & Support: v2.4')"><i class="fa-regular fa-circle-question"></i> Help</a>
     </div>
   </div>
 
-  <!-- App Workspace -->
   <div class="app-body">
-    <!-- Dark Enterprise Sidebar -->
+    <!-- Left Dark Sidebar Menu -->
     <aside class="sidebar">
       <div class="sidebar-header">
         <span>Human Resource Manag...</span>
       </div>
       <ul class="nav-menu">
-        <li class="nav-item active">
+        <li class="nav-item active" onclick="switchTab('dashboard', this)">
           <i class="fa-solid fa-gauge nav-icon"></i>
           <span>Admin Dashboard</span>
         </li>
-        <li class="nav-item">
-          <i class="fa-regular fa-id-badge nav-icon"></i>
-          <span>Profile</span>
-        </li>
-        <li class="nav-item">
+        <li class="nav-item" onclick="switchTab('requirements', this)">
           <i class="fa-regular fa-calendar-check nav-icon"></i>
           <span>Requirement Raising</span>
           <i class="fa-solid fa-chevron-right arrow"></i>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" onclick="switchTab('recruitment', this)">
           <i class="fa-solid fa-user-plus nav-icon"></i>
           <span>Recruitment</span>
           <i class="fa-solid fa-chevron-right arrow"></i>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" onclick="switchTab('employee', this)">
           <i class="fa-solid fa-users nav-icon"></i>
           <span>Employee</span>
           <i class="fa-solid fa-chevron-right arrow"></i>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" onclick="switchTab('attendance', this)">
           <i class="fa-regular fa-calendar-days nav-icon"></i>
           <span>Attendance</span>
           <i class="fa-solid fa-chevron-right arrow"></i>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" onclick="switchTab('leaves', this)">
           <i class="fa-solid fa-arrow-right-from-bracket nav-icon"></i>
           <span>Leave Tracker</span>
           <i class="fa-solid fa-chevron-right arrow"></i>
         </li>
-        <li class="nav-item">
-          <i class="fa-regular fa-clock nav-icon"></i>
-          <span>Time Tracker</span>
-          <i class="fa-solid fa-chevron-right arrow"></i>
-        </li>
-        <li class="nav-item">
-          <i class="fa-regular fa-star nav-icon"></i>
-          <span>Appraisal</span>
-          <i class="fa-solid fa-chevron-right arrow"></i>
-        </li>
-        <li class="nav-item">
+        <li class="nav-item" onclick="switchTab('announcements', this)">
           <i class="fa-solid fa-bullhorn nav-icon"></i>
           <span>Announcement</span>
           <i class="fa-solid fa-chevron-right arrow"></i>
         </li>
-        <li class="nav-item">
-          <i class="fa-solid fa-user-xmark nav-icon"></i>
-          <span>Resignation</span>
-          <i class="fa-solid fa-chevron-right arrow"></i>
-        </li>
-        <li class="nav-item">
+        <li class="nav-item" onclick="switchTab('settings', this)">
           <i class="fa-solid fa-gear nav-icon"></i>
           <span>Settings</span>
           <i class="fa-solid fa-chevron-right arrow"></i>
@@ -453,249 +606,1151 @@
       </ul>
     </aside>
 
-    <!-- Main Analytics Content -->
+    <!-- Main Dynamic Content Views -->
     <main class="main-content">
-      <!-- Top 5 Stat Cards with Left Accent -->
-      <div class="kpi-row">
-        <div class="kpi-card">
-          <div class="kpi-left-bar"></div>
-          <div class="kpi-details">
-            <div class="kpi-number">95</div>
-            <div class="kpi-title">Requirements</div>
+
+      <!-- ================= 1. DASHBOARD VIEW ================= -->
+      <section id="view-dashboard" class="view-page active">
+        <!-- 5 Top KPI Cards -->
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-left-bar"></div>
+            <div class="kpi-details">
+              <div class="kpi-number" id="kpiReqCount">95</div>
+              <div class="kpi-title">Requirements</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-left-bar"></div>
+            <div class="kpi-details">
+              <div class="kpi-number" id="kpiAppCount">6</div>
+              <div class="kpi-title">Applicants</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-left-bar"></div>
+            <div class="kpi-details">
+              <div class="kpi-number" id="kpiSelCount">3</div>
+              <div class="kpi-title">Selected</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-left-bar"></div>
+            <div class="kpi-details">
+              <div class="kpi-number" id="kpiOnbCount">3</div>
+              <div class="kpi-title">On Boarding</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-left-bar"></div>
+            <div class="kpi-details">
+              <div class="kpi-number" id="kpiEmpCount">12</div>
+              <div class="kpi-title">Employees</div>
+            </div>
           </div>
         </div>
 
-        <div class="kpi-card">
-          <div class="kpi-left-bar"></div>
-          <div class="kpi-details">
-            <div class="kpi-number">6</div>
-            <div class="kpi-title">Applicants</div>
+        <!-- Middle Charts Row -->
+        <div class="charts-row">
+          <!-- Department Bar Chart -->
+          <div class="chart-panel">
+            <div class="chart-header">
+              <span class="chart-title">Employees By Department</span>
+              <div class="chart-toolbar">
+                <button class="tool-btn" onclick="refreshDeptChart()"><i class="fa-solid fa-arrow-rotate-right"></i> Refresh</button>
+                <button class="tool-btn" onclick="toggleDeptChartType()"><i class="fa-solid fa-chart-column"></i></button>
+                <button class="tool-btn" onclick="exportData('Employees')"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+                <button class="tool-btn" onclick="sortDeptData()">Sort</button>
+              </div>
+            </div>
+            <div style="height: 230px; position: relative;">
+              <canvas id="deptBarChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Location Pie Chart -->
+          <div class="chart-panel">
+            <div class="chart-header">
+              <span class="chart-title">Employees By Location</span>
+              <div class="chart-toolbar">
+                <button class="tool-btn" onclick="refreshLocChart()"><i class="fa-solid fa-arrow-rotate-right"></i> Refresh</button>
+                <button class="tool-btn"><i class="fa-solid fa-chart-pie"></i></button>
+                <button class="tool-btn" onclick="exportData('Locations')"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+                <button class="tool-btn">Sort</button>
+              </div>
+            </div>
+            <div style="margin-bottom: 8px;">
+              <button class="tool-btn" onclick="regenerateLocationRatios()" style="padding: 2px 7px; font-size: 0.7rem;">Regenerate</button>
+            </div>
+            <div class="pie-legend-wrapper">
+              <div style="width: 170px; height: 170px; flex-shrink: 0;">
+                <canvas id="locationPieChart"></canvas>
+              </div>
+              <div class="pie-checklist">
+                <div class="pie-check-item">
+                  <input type="checkbox" checked id="chkLocAll" onchange="toggleLocLegend(this)"> <strong>Location</strong>
+                </div>
+                <div class="pie-check-item" style="padding-left:12px;">
+                  <span class="badge-sq" style="background:#ff6d60;"></span> Detroit (<span id="pctDetroit">33.3%</span>)
+                </div>
+                <div class="pie-check-item" style="padding-left:12px;">
+                  <span class="badge-sq" style="background:#a8e063;"></span> Grand Rapids (<span id="pctGrand">33.3%</span>)
+                </div>
+                <div class="pie-check-item" style="padding-left:12px;">
+                  <span class="badge-sq" style="background:#5da3ff;"></span> Warren city (<span id="pctWarren">33.4%</span>)
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="kpi-card">
-          <div class="kpi-left-bar"></div>
-          <div class="kpi-details">
-            <div class="kpi-number">3</div>
-            <div class="kpi-title">Selected</div>
-          </div>
-        </div>
-
-        <div class="kpi-card">
-          <div class="kpi-left-bar"></div>
-          <div class="kpi-details">
-            <div class="kpi-number">3</div>
-            <div class="kpi-title">On Boarding</div>
-          </div>
-        </div>
-
-        <div class="kpi-card">
-          <div class="kpi-left-bar"></div>
-          <div class="kpi-details">
-            <div class="kpi-number">12</div>
-            <div class="kpi-title">Employees</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mid Charts Grid -->
-      <div class="charts-row">
-        <!-- Employees By Department -->
-        <div class="chart-panel">
+        <!-- Bottom Chart: Monthly Joinees & Resignees -->
+        <div class="bottom-chart-panel">
           <div class="chart-header">
-            <span class="chart-title">Employees By Department</span>
+            <span class="chart-title">Monthly Joinees and Resignees</span>
             <div class="chart-toolbar">
-              <button class="tool-btn" onclick="updateDeptChart()"><i class="fa-solid fa-arrow-rotate-right"></i> Refresh</button>
+              <button class="tool-btn" onclick="refreshJoineeChart()"><i class="fa-solid fa-arrow-rotate-right"></i> Refresh</button>
               <button class="tool-btn"><i class="fa-solid fa-chart-column"></i></button>
-              <button class="tool-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+              <button class="tool-btn" onclick="exportData('Joinees')"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
               <button class="tool-btn">Sort</button>
             </div>
           </div>
-          <div style="height: 230px; position: relative;">
-            <canvas id="deptBarChart"></canvas>
+
+          <div style="display:flex; justify-content:flex-end; gap:12px; margin-bottom:4px; font-size:0.72rem;">
+            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" checked> Status</label>
+            <span style="display:flex; align-items:center; gap:4px;"><span class="badge-sq" style="background:#b3e283;"></span> Joined</span>
+            <span style="display:flex; align-items:center; gap:4px;"><span class="badge-sq" style="background:#ff7b72;"></span> Resigned</span>
+          </div>
+
+          <div style="height: 180px; position: relative;">
+            <canvas id="joineeChart"></canvas>
+          </div>
+
+          <!-- Interactive Tooltip Overlay Callout -->
+          <div class="mock-tooltip" id="interactiveTooltip" onclick="drillDownJoinees()">
+            <div>Current Year: <strong id="ttMonth">Jan</strong></div>
+            <div>Employees Count: <strong id="ttCount">2</strong></div>
+            <div>Status: <strong id="ttStatus">Resigned</strong></div>
+            <div class="note">Click to: View Underlying Data / Drill Down</div>
           </div>
         </div>
+      </section>
 
-        <!-- Employees By Location -->
-        <div class="chart-panel">
-          <div class="chart-header">
-            <span class="chart-title">Employees By Location</span>
-            <div class="chart-toolbar">
-              <button class="tool-btn"><i class="fa-solid fa-arrow-rotate-right"></i> Refresh</button>
-              <button class="tool-btn"><i class="fa-solid fa-chart-pie"></i></button>
-              <button class="tool-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
-              <button class="tool-btn">Sort</button>
-            </div>
-          </div>
-          <div style="margin-bottom: 8px;">
-            <button class="tool-btn" style="padding: 2px 7px; font-size: 0.7rem;">Regenerate</button>
-          </div>
-          <div class="pie-legend-wrapper">
-            <div style="width: 170px; height: 170px; flex-shrink: 0;">
-              <canvas id="locationPieChart"></canvas>
-            </div>
-            <div class="pie-checklist">
-              <div class="pie-check-item">
-                <input type="checkbox" checked> <strong>Location</strong>
-              </div>
-              <div class="pie-check-item" style="padding-left:12px;">
-                <span class="badge-sq" style="background:#ff6d60;"></span> Detroit
-              </div>
-              <div class="pie-check-item" style="padding-left:12px;">
-                <span class="badge-sq" style="background:#a8e063;"></span> Grand Rapids city
-              </div>
-              <div class="pie-check-item" style="padding-left:12px;">
-                <span class="badge-sq" style="background:#5da3ff;"></span> Warren city
+      <!-- ================= 2. REQUIREMENTS VIEW ================= -->
+      <section id="view-requirements" class="view-page">
+        <div class="table-card">
+          <div class="table-controls">
+            <div style="display:flex; gap:10px; align-items:center;">
+              <h3 style="font-size:0.95rem; font-weight:600;">Open Positions & Requisitions</h3>
+              <div class="search-input">
+                <i class="fa-solid fa-magnifying-glass" style="color:#94a3b8;"></i>
+                <input type="text" placeholder="Search requirements..." oninput="filterRequirements(this.value)">
               </div>
             </div>
+            <button class="btn-action" onclick="openModal('addReqModal')"><i class="fa-solid fa-plus"></i> Post Requirement</button>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Job Title</th>
+                <th>Department</th>
+                <th>Openings</th>
+                <th>Location</th>
+                <th>Urgency</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="reqTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= 3. RECRUITMENT VIEW ================= -->
+      <section id="view-recruitment" class="view-page">
+        <div class="table-card">
+          <div class="table-controls">
+            <div style="display:flex; gap:10px; align-items:center;">
+              <h3 style="font-size:0.95rem; font-weight:600;">Applicant Pipeline</h3>
+              <div class="search-input">
+                <i class="fa-solid fa-magnifying-glass" style="color:#94a3b8;"></i>
+                <input type="text" placeholder="Search candidate..." oninput="filterCandidates(this.value)">
+              </div>
+            </div>
+            <button class="btn-action" onclick="openModal('addCandidateModal')"><i class="fa-solid fa-user-plus"></i> Add Applicant</button>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Candidate Name</th>
+                <th>Applied Role</th>
+                <th>Experience</th>
+                <th>Current Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="candidateTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= 4. EMPLOYEE VIEW ================= -->
+      <section id="view-employee" class="view-page">
+        <div class="table-card">
+          <div class="table-controls">
+            <div style="display:flex; gap:10px; align-items:center;">
+              <h3 style="font-size:0.95rem; font-weight:600;">Employee Directory</h3>
+              <div class="search-input">
+                <i class="fa-solid fa-magnifying-glass" style="color:#94a3b8;"></i>
+                <input type="text" placeholder="Search by name, dept..." oninput="filterEmployees(this.value)">
+              </div>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-outline" onclick="exportData('Employees')"><i class="fa-solid fa-download"></i> Export</button>
+              <button class="btn-action" onclick="openModal('addEmpModal')"><i class="fa-solid fa-plus"></i> Add Employee</button>
+            </div>
+          </div>
+
+          <table class="data-table" id="empMainTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Employee Name</th>
+                <th>Department</th>
+                <th>Role</th>
+                <th>Location</th>
+                <th>Joined</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="empTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= 5. ATTENDANCE VIEW ================= -->
+      <section id="view-attendance" class="view-page">
+        <div class="table-card">
+          <div class="table-controls">
+            <div style="display:flex; gap:12px; align-items:center;">
+              <h3 style="font-size:0.95rem; font-weight:600;">Daily Attendance Punch</h3>
+              <input type="date" id="punchDate" style="border:1px solid #cbd5e1; padding:4px 8px; border-radius:4px; font-size:0.75rem;">
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-outline" onclick="markAllAtt('present')">All Present</button>
+              <button class="btn-outline" onclick="markAllAtt('absent')">All Absent</button>
+              <button class="btn-action" onclick="saveAttendance()">Save Attendance</button>
+            </div>
+          </div>
+
+          <div class="att-grid" id="attCardGrid"></div>
+        </div>
+      </section>
+
+      <!-- ================= 6. LEAVES VIEW ================= -->
+      <section id="view-leaves" class="view-page">
+        <div class="table-card">
+          <div class="table-controls">
+            <h3 style="font-size:0.95rem; font-weight:600;">Leave Requests</h3>
+            <button class="btn-action" onclick="openModal('applyLeaveModal')"><i class="fa-solid fa-calendar-plus"></i> Apply Leave</button>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Leave Type</th>
+                <th>From Date</th>
+                <th>To Date</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Decision</th>
+              </tr>
+            </thead>
+            <tbody id="leavesTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ================= 7. ANNOUNCEMENTS VIEW ================= -->
+      <section id="view-announcements" class="view-page">
+        <div class="table-card">
+          <div class="table-controls">
+            <h3 style="font-size:0.95rem; font-weight:600;">Company Bulletins</h3>
+            <button class="btn-action" onclick="openModal('addAnnounceModal')"><i class="fa-solid fa-plus"></i> Post Bulletin</button>
+          </div>
+          <div id="bulletinFeed" style="display:flex; flex-direction:column; gap:12px;"></div>
+        </div>
+      </section>
+
+      <!-- ================= 8. SETTINGS VIEW ================= -->
+      <section id="view-settings" class="view-page">
+        <div class="table-card">
+          <h3 style="font-size:0.95rem; font-weight:600; margin-bottom:14px; border-bottom:1px solid #edf2f7; padding-bottom:8px;">Enterprise Configurations</h3>
+          <div class="modal-form-grid" style="max-width:700px;">
+            <div class="form-group span2">
+              <label>Organization Name</label>
+              <input type="text" value="Acme Corporation Ltd.">
+            </div>
+            <div class="form-group">
+              <label>Default Currency</label>
+              <select><option>USD ($)</option><option>EUR (€)</option><option>GBP (£)</option></select>
+            </div>
+            <div class="form-group">
+              <label>Work Week Pattern</label>
+              <select><option>Monday - Friday</option><option>Sunday - Thursday</option></select>
+            </div>
+            <div class="form-group span2">
+              <label>Admin Notification Email</label>
+              <input type="email" value="hr-admin@acmecorp.com">
+            </div>
+          </div>
+          <div style="margin-top:16px;">
+            <button class="btn-action" onclick="showToast('Configurations successfully saved!')">Save Preferences</button>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Bottom Chart: Monthly Joinees and Resignees -->
-      <div class="bottom-chart-panel">
-        <div class="chart-header">
-          <span class="chart-title">Monthly Joinees and Resignees</span>
-          <div class="chart-toolbar">
-            <button class="tool-btn"><i class="fa-solid fa-arrow-rotate-right"></i> Refresh</button>
-            <button class="tool-btn"><i class="fa-solid fa-chart-column"></i></button>
-            <button class="tool-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
-            <button class="tool-btn">Sort</button>
-          </div>
-        </div>
-
-        <div style="display:flex; justify-content:flex-end; gap:12px; margin-bottom:4px; font-size:0.72rem;">
-          <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" checked> Status</label>
-          <span style="display:flex; align-items:center; gap:4px;"><span class="badge-sq" style="background:#b3e283;"></span> Joined</span>
-          <span style="display:flex; align-items:center; gap:4px;"><span class="badge-sq" style="background:#ff7b72;"></span> Resigned</span>
-        </div>
-
-        <div style="height: 180px; position: relative;">
-          <canvas id="joineeChart"></canvas>
-        </div>
-
-        <!-- Custom Tooltip Callout -->
-        <div class="mock-tooltip">
-          <div>Current Year: <strong>Jan</strong></div>
-          <div>Employees Count: <strong>2</strong></div>
-          <div>Status: <strong>Resigned</strong></div>
-          <div class="note">Click to: View Underlying Data / Drill Down</div>
-        </div>
-      </div>
     </main>
   </div>
 </div>
 
+<!-- ================= MODALS ================= -->
+
+<!-- Add Requirement Modal -->
+<div class="modal-overlay" id="addReqModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Raise Job Requirement</h3>
+      <button class="modal-close" onclick="closeModal('addReqModal')">&times;</button>
+    </div>
+    <form onsubmit="submitRequirement(event)">
+      <div class="modal-form-grid">
+        <div class="form-group span2">
+          <label>Job Title</label>
+          <input type="text" id="reqTitle" required placeholder="e.g. Senior Frontend Dev">
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <select id="reqDept" required>
+            <option value="App Deck">App Deck</option>
+            <option value="HR Team">HR Team</option>
+            <option value="Support">Support</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Headcount Openings</label>
+          <input type="number" id="reqOpenings" min="1" value="1" required>
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <select id="reqLocation">
+            <option>Detroit</option>
+            <option>Grand Rapids city</option>
+            <option>Warren city</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Urgency</label>
+          <select id="reqUrgency">
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-outline" onclick="closeModal('addReqModal')">Cancel</button>
+        <button type="submit" class="btn-action">Submit Requirement</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Candidate Modal -->
+<div class="modal-overlay" id="addCandidateModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Add Applicant</h3>
+      <button class="modal-close" onclick="closeModal('addCandidateModal')">&times;</button>
+    </div>
+    <form onsubmit="submitCandidate(event)">
+      <div class="modal-form-grid">
+        <div class="form-group span2">
+          <label>Applicant Full Name</label>
+          <input type="text" id="candName" required placeholder="e.g. Rachel Adams">
+        </div>
+        <div class="form-group span2">
+          <label>Applying For Position</label>
+          <select id="candRole">
+            <option>Software Engineer</option>
+            <option>HR Specialist</option>
+            <option>Technical Support</option>
+            <option>UI/UX Designer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Experience (Years)</label>
+          <input type="number" id="candExp" min="0" value="3" required>
+        </div>
+        <div class="form-group">
+          <label>Stage</label>
+          <select id="candStage">
+            <option value="Applicant">Applicant</option>
+            <option value="Selected">Selected</option>
+            <option value="On Boarding">On Boarding</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-outline" onclick="closeModal('addCandidateModal')">Cancel</button>
+        <button type="submit" class="btn-action">Add Candidate</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Employee Modal -->
+<div class="modal-overlay" id="addEmpModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>New Employee Onboarding</h3>
+      <button class="modal-close" onclick="closeModal('addEmpModal')">&times;</button>
+    </div>
+    <form onsubmit="submitEmployee(event)">
+      <div class="modal-form-grid">
+        <div class="form-group span2">
+          <label>Full Name</label>
+          <input type="text" id="empName" required placeholder="e.g. Michael Scott">
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <select id="empDept" required>
+            <option value="App Deck">App Deck</option>
+            <option value="HR Team">HR Team</option>
+            <option value="Support">Support</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Designation</label>
+          <input type="text" id="empRole" required placeholder="e.g. Lead Developer">
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <select id="empLoc">
+            <option value="Detroit">Detroit</option>
+            <option value="Grand Rapids city">Grand Rapids city</option>
+            <option value="Warren city">Warren city</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Joined Date</label>
+          <input type="date" id="empDate" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-outline" onclick="closeModal('addEmpModal')">Cancel</button>
+        <button type="submit" class="btn-action">Enroll Employee</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Apply Leave Modal -->
+<div class="modal-overlay" id="applyLeaveModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Submit Leave Request</h3>
+      <button class="modal-close" onclick="closeModal('applyLeaveModal')">&times;</button>
+    </div>
+    <form onsubmit="submitLeave(event)">
+      <div class="modal-form-grid">
+        <div class="form-group span2">
+          <label>Employee Name</label>
+          <select id="leaveEmpSelect"></select>
+        </div>
+        <div class="form-group">
+          <label>Leave Category</label>
+          <select id="leaveType">
+            <option>Casual Leave</option>
+            <option>Medical Leave</option>
+            <option>Vacation Leave</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Days</label>
+          <input type="number" id="leaveDays" min="1" max="15" value="1" required>
+        </div>
+        <div class="form-group span2">
+          <label>Reason</label>
+          <textarea id="leaveReason" rows="2" placeholder="Brief explanation..." required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-outline" onclick="closeModal('applyLeaveModal')">Cancel</button>
+        <button type="submit" class="btn-action">Submit Request</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Announcement Modal -->
+<div class="modal-overlay" id="addAnnounceModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Create Bulletin Notice</h3>
+      <button class="modal-close" onclick="closeModal('addAnnounceModal')">&times;</button>
+    </div>
+    <form onsubmit="submitAnnouncement(event)">
+      <div class="modal-form-grid">
+        <div class="form-group span2">
+          <label>Headline</label>
+          <input type="text" id="annTitle" placeholder="e.g. Annual Strategy Townhall" required>
+        </div>
+        <div class="form-group span2">
+          <label>Details</label>
+          <textarea id="annContent" rows="3" placeholder="Write bulletin notes..." required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-outline" onclick="closeModal('addAnnounceModal')">Cancel</button>
+        <button type="submit" class="btn-action">Publish Notice</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Drill Down Modal -->
+<div class="modal-overlay" id="drillDownModal">
+  <div class="modal-card" style="max-width:650px;">
+    <div class="modal-header">
+      <h3 id="drillTitle">Underlying Records Drill Down</h3>
+      <button class="modal-close" onclick="closeModal('drillDownModal')">&times;</button>
+    </div>
+    <div style="max-height:300px; overflow-y:auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Type</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="drillTableBody"></tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-action" onclick="closeModal('drillDownModal')">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastBox"></div>
+
 <script>
-// Department Bar Chart
-const deptCtx = document.getElementById('deptBarChart').getContext('2d');
-const deptBarChart = new Chart(deptCtx, {
-  type: 'bar',
-  data: {
-    labels: ['App Deck', 'HR Team\nDepartment', 'Support'],
-    datasets: [{
-      label: 'Employee Count',
-      data: [6, 3, 3],
-      backgroundColor: '#5ea2f8',
-      borderRadius: 0,
-      barPercentage: 0.65
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false }
-    },
-    scales: {
-      x: {
-        grid: { display: false },
-        ticks: { font: { family: 'Open Sans', size: 11 }, color: '#333' }
-      },
-      y: {
-        min: 0,
-        max: 6,
-        ticks: { stepSize: 2, font: { family: 'Open Sans', size: 10 } },
-        title: { display: true, text: 'Employee Count', font: { size: 11 } },
-        grid: { color: '#ebf0f5', strokeDashArray: [3, 3] }
-      }
-    }
-  }
+// ================= APPLICATION STATE =================
+let employees = [
+  { id: 'EMP001', name: 'John Doe', dept: 'App Deck', role: 'Full Stack Engineer', loc: 'Detroit', joined: '2024-01-15', status: 'Active' },
+  { id: 'EMP002', name: 'Sarah Jenkins', dept: 'App Deck', role: 'iOS Specialist', loc: 'Detroit', joined: '2024-02-10', status: 'Active' },
+  { id: 'EMP003', name: 'Alex Rivera', dept: 'App Deck', role: 'Backend Lead', loc: 'Warren city', joined: '2023-11-20', status: 'Active' },
+  { id: 'EMP004', name: 'Elena Rostova', dept: 'App Deck', role: 'React Developer', loc: 'Grand Rapids city', joined: '2024-01-05', status: 'Active' },
+  { id: 'EMP005', name: 'Mark Vance', dept: 'App Deck', role: 'QA Automation', loc: 'Detroit', joined: '2023-09-12', status: 'Active' },
+  { id: 'EMP006', name: 'Chloe Bennett', dept: 'App Deck', role: 'DevOps Architect', loc: 'Warren city', joined: '2023-12-01', status: 'Active' },
+  { id: 'EMP007', name: 'Patricia Fox', dept: 'HR Team', role: 'HR Business Partner', loc: 'Detroit', joined: '2023-04-18', status: 'Active' },
+  { id: 'EMP008', name: 'David Miller', dept: 'HR Team', role: 'Talent Acquisition', loc: 'Grand Rapids city', joined: '2024-01-22', status: 'Active' },
+  { id: 'EMP009', name: 'Grace Lee', dept: 'HR Team', role: 'People Operations', loc: 'Warren city', joined: '2023-08-30', status: 'Active' },
+  { id: 'EMP010', name: 'Robert King', dept: 'Support', role: 'Technical Support L2', loc: 'Grand Rapids city', joined: '2023-10-14', status: 'Active' },
+  { id: 'EMP011', name: 'Simon Walsh', dept: 'Support', role: 'Customer Success', loc: 'Detroit', joined: '2024-01-18', status: 'Active' },
+  { id: 'EMP012', name: 'Nina Simone', dept: 'Support', role: 'Helpdesk Specialist', loc: 'Warren city', joined: '2024-01-29', status: 'Active' },
+];
+
+let requirements = [
+  { id: 1, title: 'Senior Backend Engineer', dept: 'App Deck', openings: 45, loc: 'Detroit', urgency: 'High', status: 'Active' },
+  { id: 2, title: 'HR Generalist', dept: 'HR Team', openings: 10, loc: 'Grand Rapids city', urgency: 'Medium', status: 'Active' },
+  { id: 3, title: 'Support Tier-1 Associate', dept: 'Support', openings: 40, loc: 'Warren city', urgency: 'High', status: 'Active' },
+];
+
+let candidates = [
+  { id: 1, name: 'Lucas Scott', role: 'Software Engineer', exp: '4 yrs', stage: 'Applicant' },
+  { id: 2, name: 'Emma Watson', role: 'HR Specialist', exp: '2 yrs', stage: 'Applicant' },
+  { id: 3, name: 'Jason Todd', role: 'UI/UX Designer', exp: '5 yrs', stage: 'Selected' },
+  { id: 4, name: 'Samantha Carter', role: 'Technical Support', exp: '3 yrs', stage: 'Selected' },
+  { id: 5, name: 'Bruce Banner', role: 'Backend Developer', exp: '6 yrs', stage: 'On Boarding' },
+  { id: 6, name: 'Diana Prince', role: 'HR Manager', exp: '8 yrs', stage: 'On Boarding' },
+];
+
+let attendancePunch = {};
+let leaves = [
+  { id: 1, emp: 'John Doe', type: 'Casual Leave', from: '2024-06-10', to: '2024-06-11', reason: 'Family engagement', status: 'Approved' },
+  { id: 2, emp: 'Sarah Jenkins', type: 'Medical Leave', from: '2024-06-12', to: '2024-06-13', reason: 'Fever recovery', status: 'Pending' },
+];
+
+let bulletins = [
+  { title: 'Quarterly Town Hall & Strategy Update', date: '2024-05-20', content: 'Our company quarterly review is set for this Thursday at 10 AM EST. All departments are expected to attend.' },
+  { title: 'New Health Insurance Perks & Benefits', date: '2024-05-18', content: 'HR has upgraded the international health coverage options. Please verify changes under your profile section.' }
+];
+
+let deptChartInst, locChartInst, joineeChartInst;
+
+// ================= INITIALIZATION =================
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('punchDate').value = new Date().toISOString().split('T')[0];
+  document.getElementById('empDate').value = new Date().toISOString().split('T')[0];
+  
+  // default attendance status
+  employees.forEach(e => attendancePunch[e.id] = 'present');
+
+  initCharts();
+  renderAll();
 });
 
-// Location Pie Chart
-const locCtx = document.getElementById('locationPieChart').getContext('2d');
-new Chart(locCtx, {
-  type: 'pie',
-  data: {
-    labels: ['Detroit', 'Grand Rapids city', 'Warren city'],
-    datasets: [{
-      data: [33.3, 33.3, 33.4],
-      backgroundColor: ['#ff7368', '#b5e77d', '#5ba3fc'],
-      borderWidth: 1,
-      borderColor: '#ffffff'
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
-      tooltip: {
-        callbacks: {
-          label: ctx => ` ${ctx.label}: ${ctx.raw}%`
+// ================= TAB SWITCHING =================
+function switchTab(viewId, navEl) {
+  document.querySelectorAll('.view-page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+  const target = document.getElementById('view-' + viewId);
+  if (target) target.classList.add('active');
+  if (navEl) navEl.classList.add('active');
+
+  // Trigger chart renders/updates if navigating back to dashboard
+  if (viewId === 'dashboard') {
+    setTimeout(() => {
+      deptChartInst.resize();
+      locChartInst.resize();
+      joineeChartInst.resize();
+    }, 50);
+  }
+}
+
+// ================= RENDER METHODS =================
+function renderAll() {
+  updateKPIs();
+  renderEmployeesTable(employees);
+  renderRequirementsTable(requirements);
+  renderCandidatesTable(candidates);
+  renderAttendanceGrid();
+  renderLeavesTable();
+  renderBulletins();
+  populateLeaveEmployeeDropdown();
+}
+
+function updateKPIs() {
+  const reqTotal = requirements.reduce((acc, r) => acc + parseInt(r.openings), 0);
+  document.getElementById('kpiReqCount').textContent = reqTotal;
+  document.getElementById('kpiAppCount').textContent = candidates.length;
+  document.getElementById('kpiSelCount').textContent = candidates.filter(c => c.stage === 'Selected').length;
+  document.getElementById('kpiOnbCount').textContent = candidates.filter(c => c.stage === 'On Boarding').length;
+  document.getElementById('kpiEmpCount').textContent = employees.length;
+}
+
+// ================= EMPLOYEES =================
+function renderEmployeesTable(list) {
+  const tbody = document.getElementById('empTableBody');
+  tbody.innerHTML = list.map(e => `
+    <tr>
+      <td><strong>${e.id}</strong></td>
+      <td>${e.name}</td>
+      <td>${e.dept}</td>
+      <td>${e.role}</td>
+      <td>${e.loc}</td>
+      <td>${e.joined}</td>
+      <td><span class="badge ${e.status.toLowerCase()}">${e.status}</span></td>
+      <td>
+        <button class="tool-btn" onclick="removeEmployee('${e.id}')" title="Delete"><i class="fa-solid fa-trash" style="color:#ef4444;"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterEmployees(query) {
+  const q = query.toLowerCase();
+  const filtered = employees.filter(e => e.name.toLowerCase().includes(q) || e.dept.toLowerCase().includes(q) || e.loc.toLowerCase().includes(q));
+  renderEmployeesTable(filtered);
+}
+
+function submitEmployee(e) {
+  e.preventDefault();
+  const name = document.getElementById('empName').value.trim();
+  const dept = document.getElementById('empDept').value;
+  const role = document.getElementById('empRole').value.trim();
+  const loc = document.getElementById('empLoc').value;
+  const joined = document.getElementById('empDate').value;
+
+  const nextId = 'EMP' + String(employees.length + 1).padStart(3, '0');
+  employees.push({ id: nextId, name, dept, role, loc, joined, status: 'Active' });
+  attendancePunch[nextId] = 'present';
+
+  closeModal('addEmpModal');
+  e.target.reset();
+  renderAll();
+  updateChartsData();
+  showToast(`Enrolled employee ${name}!`);
+}
+
+function removeEmployee(id) {
+  if (confirm(`Remove record for employee ${id}?`)) {
+    employees = employees.filter(e => e.id !== id);
+    delete attendancePunch[id];
+    renderAll();
+    updateChartsData();
+    showToast(`Employee removed.`, 'warning');
+  }
+}
+
+// ================= REQUIREMENTS =================
+function renderRequirementsTable(list) {
+  const tbody = document.getElementById('reqTableBody');
+  tbody.innerHTML = list.map(r => `
+    <tr>
+      <td><strong>${r.title}</strong></td>
+      <td>${r.dept}</td>
+      <td>${r.openings} Positions</td>
+      <td>${r.loc}</td>
+      <td><span class="badge ${r.urgency === 'High' ? 'resigned' : 'pending'}">${r.urgency}</span></td>
+      <td><span class="badge active">${r.status}</span></td>
+      <td>
+        <button class="tool-btn" onclick="deleteRequirement(${r.id})"><i class="fa-solid fa-trash"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterRequirements(query) {
+  const q = query.toLowerCase();
+  renderRequirementsTable(requirements.filter(r => r.title.toLowerCase().includes(q) || r.dept.toLowerCase().includes(q)));
+}
+
+function submitRequirement(e) {
+  e.preventDefault();
+  const title = document.getElementById('reqTitle').value.trim();
+  const dept = document.getElementById('reqDept').value;
+  const openings = parseInt(document.getElementById('reqOpenings').value);
+  const loc = document.getElementById('reqLocation').value;
+  const urgency = document.getElementById('reqUrgency').value;
+
+  requirements.push({ id: Date.now(), title, dept, openings, loc, urgency, status: 'Active' });
+  closeModal('addReqModal');
+  e.target.reset();
+  renderAll();
+  showToast('Requirement requisition raised successfully.');
+}
+
+function deleteRequirement(id) {
+  requirements = requirements.filter(r => r.id !== id);
+  renderAll();
+  showToast('Requisition removed');
+}
+
+// ================= RECRUITMENT / CANDIDATES =================
+function renderCandidatesTable(list) {
+  const tbody = document.getElementById('candidateTableBody');
+  tbody.innerHTML = list.map(c => `
+    <tr>
+      <td><strong>${c.name}</strong></td>
+      <td>${c.role}</td>
+      <td>${c.exp}</td>
+      <td><span class="badge ${c.stage === 'Selected' ? 'approved' : c.stage === 'On Boarding' ? 'onboarding' : 'pending'}">${c.stage}</span></td>
+      <td>
+        <div style="display:flex; gap:4px;">
+          <button class="tool-btn" onclick="updateCandidateStage(${c.id}, 'Selected')">Select</button>
+          <button class="tool-btn" onclick="updateCandidateStage(${c.id}, 'On Boarding')">Onboard</button>
+          <button class="tool-btn" onclick="deleteCandidate(${c.id})"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterCandidates(q) {
+  const s = q.toLowerCase();
+  renderCandidatesTable(candidates.filter(c => c.name.toLowerCase().includes(s) || c.role.toLowerCase().includes(s)));
+}
+
+function submitCandidate(e) {
+  e.preventDefault();
+  const name = document.getElementById('candName').value.trim();
+  const role = document.getElementById('candRole').value;
+  const exp = document.getElementById('candExp').value + ' yrs';
+  const stage = document.getElementById('candStage').value;
+
+  candidates.push({ id: Date.now(), name, role, exp, stage });
+  closeModal('addCandidateModal');
+  e.target.reset();
+  renderAll();
+  showToast(`Candidate ${name} recorded.`);
+}
+
+function updateCandidateStage(id, stage) {
+  const c = candidates.find(item => item.id === id);
+  if (c) {
+    c.stage = stage;
+    renderAll();
+    showToast(`${c.name} transitioned to ${stage}`);
+  }
+}
+
+function deleteCandidate(id) {
+  candidates = candidates.filter(c => c.id !== id);
+  renderAll();
+  showToast('Applicant removed.');
+}
+
+// ================= ATTENDANCE =================
+function renderAttendanceGrid() {
+  const container = document.getElementById('attCardGrid');
+  container.innerHTML = employees.map(e => {
+    const status = attendancePunch[e.id] || 'present';
+    return `
+      <div class="att-box ${status}" id="attBox_${e.id}">
+        <i class="fa-solid fa-user-circle" style="font-size:1.6rem; color:#94a3b8;"></i>
+        <div class="att-name">${e.name}</div>
+        <div class="att-dept">${e.dept}</div>
+        <div class="att-actions">
+          <button class="att-btn p" onclick="setAttendance('${e.id}','present')">P</button>
+          <button class="att-btn a" onclick="setAttendance('${e.id}','absent')">A</button>
+          <button class="att-btn l" onclick="setAttendance('${e.id}','leave')">L</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function setAttendance(empId, status) {
+  attendancePunch[empId] = status;
+  const el = document.getElementById(`attBox_${empId}`);
+  if (el) el.className = `att-box ${status}`;
+}
+
+function markAllAtt(status) {
+  employees.forEach(e => attendancePunch[e.id] = status);
+  renderAttendanceGrid();
+  showToast(`All employees logged as ${status.toUpperCase()}`);
+}
+
+function saveAttendance() {
+  showToast('Daily attendance saved to enterprise timesheets!');
+}
+
+// ================= LEAVES =================
+function populateLeaveEmployeeDropdown() {
+  const sel = document.getElementById('leaveEmpSelect');
+  sel.innerHTML = employees.map(e => `<option value="${e.name}">${e.name} (${e.dept})</option>`).join('');
+}
+
+function renderLeavesTable() {
+  const tbody = document.getElementById('leavesTableBody');
+  tbody.innerHTML = leaves.map(l => `
+    <tr>
+      <td><strong>${l.emp}</strong></td>
+      <td>${l.type}</td>
+      <td>${l.from}</td>
+      <td>${l.to}</td>
+      <td>${l.reason}</td>
+      <td><span class="badge ${l.status === 'Approved' ? 'approved' : l.status === 'Rejected' ? 'resigned' : 'pending'}">${l.status}</span></td>
+      <td>
+        <button class="tool-btn" onclick="decideLeave(${l.id},'Approved')"><i class="fa-solid fa-check" style="color:#22c55e;"></i></button>
+        <button class="tool-btn" onclick="decideLeave(${l.id},'Rejected')"><i class="fa-solid fa-xmark" style="color:#ef4444;"></i></button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function submitLeave(e) {
+  e.preventDefault();
+  const emp = document.getElementById('leaveEmpSelect').value;
+  const type = document.getElementById('leaveType').value;
+  const days = parseInt(document.getElementById('leaveDays').value);
+  const reason = document.getElementById('leaveReason').value.trim();
+
+  const now = new Date();
+  const from = now.toISOString().split('T')[0];
+  const toDate = new Date(now.setDate(now.getDate() + days));
+  const to = toDate.toISOString().split('T')[0];
+
+  leaves.unshift({ id: Date.now(), emp, type, from, to, reason, status: 'Pending' });
+  closeModal('applyLeaveModal');
+  e.target.reset();
+  renderLeavesTable();
+  showToast('Leave request forwarded to manager.');
+}
+
+function decideLeave(id, status) {
+  const item = leaves.find(l => l.id === id);
+  if (item) {
+    item.status = status;
+    renderLeavesTable();
+    showToast(`Leave status marked as ${status}`);
+  }
+}
+
+// ================= BULLETINS =================
+function renderBulletins() {
+  const feed = document.getElementById('bulletinFeed');
+  feed.innerHTML = bulletins.map((b, idx) => `
+    <div style="border:1px solid #e2e8f0; border-left:4px solid var(--app-blue); padding:12px; border-radius:4px; position:relative;">
+      <div style="display:flex; justify-content:space-between;">
+        <strong style="font-size:0.88rem; color:#2d3748;">${b.title}</strong>
+        <span style="font-size:0.72rem; color:#94a3b8;">${b.date}</span>
+      </div>
+      <p style="font-size:0.8rem; color:#4a5568; margin-top:6px; line-height:1.4;">${b.content}</p>
+      <button class="tool-btn" onclick="removeBulletin(${idx})" style="position:absolute; right:8px; bottom:8px;"><i class="fa-solid fa-trash"></i></button>
+    </div>
+  `).join('');
+}
+
+function submitAnnouncement(e) {
+  e.preventDefault();
+  const title = document.getElementById('annTitle').value.trim();
+  const content = document.getElementById('annContent').value.trim();
+  const date = new Date().toISOString().split('T')[0];
+
+  bulletins.unshift({ title, content, date });
+  closeModal('addAnnounceModal');
+  e.target.reset();
+  renderBulletins();
+  showToast('Bulletin announcement posted.');
+}
+
+function removeBulletin(idx) {
+  bulletins.splice(idx, 1);
+  renderBulletins();
+  showToast('Notice removed');
+}
+
+// ================= CHARTS CONTROLLER =================
+function initCharts() {
+  // 1. Department Chart
+  const deptCtx = document.getElementById('deptBarChart').getContext('2d');
+  deptChartInst = new Chart(deptCtx, {
+    type: 'bar',
+    data: {
+      labels: ['App Deck', 'HR Team\nDepartment', 'Support'],
+      datasets: [{
+        label: 'Employee Count',
+        data: [6, 3, 3],
+        backgroundColor: '#5ea2f8',
+        barPercentage: 0.6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          min: 0,
+          suggestedMax: 8,
+          ticks: { stepSize: 2 },
+          title: { display: true, text: 'Employee Count', font: { size: 11 } },
+          grid: { color: '#ebf0f5' }
         }
       }
     }
-  }
-});
+  });
 
-// Monthly Joinees & Resignees Stacked Chart
-const joinCtx = document.getElementById('joineeChart').getContext('2d');
-new Chart(joinCtx, {
-  type: 'bar',
-  data: {
-    labels: ['Nov', 'Dec', 'Jan'],
-    datasets: [
-      {
-        label: 'Resigned',
-        data: [0, 0, 2],
-        backgroundColor: '#ff7b72',
-        barPercentage: 0.4
-      },
-      {
-        label: 'Joined',
-        data: [0, 0, 4],
-        backgroundColor: '#b3e283',
-        barPercentage: 0.4
-      }
-    ]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        grid: { display: false },
-        ticks: { font: { size: 11 } }
-      },
-      y: {
-        min: 0,
-        max: 4,
-        ticks: { stepSize: 1, font: { size: 10 } },
-        title: { display: true, text: 'Employees Count', font: { size: 11 } },
-        grid: { color: '#ebf0f5' }
-      }
+  // 2. Location Pie Chart
+  const locCtx = document.getElementById('locationPieChart').getContext('2d');
+  locChartInst = new Chart(locCtx, {
+    type: 'pie',
+    data: {
+      labels: ['Detroit', 'Grand Rapids city', 'Warren city'],
+      datasets: [{
+        data: [33.3, 33.3, 33.4],
+        backgroundColor: ['#ff7368', '#b5e77d', '#5ba3fc'],
+        borderWidth: 1,
+        borderColor: '#ffffff'
+      }]
     },
-    plugins: {
-      legend: { display: false }
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.label}: ${ctx.raw}%`
+          }
+        }
+      }
     }
-  }
-});
+  });
 
-function updateDeptChart() {
-  deptBarChart.data.datasets[0].data = [6, 3, 3];
-  deptBarChart.update();
+  // 3. Joinees Chart
+  const joinCtx = document.getElementById('joineeChart').getContext('2d');
+  joineeChartInst = new Chart(joinCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Nov', 'Dec', 'Jan'],
+      datasets: [
+        {
+          label: 'Resigned',
+          data: [0, 0, 2],
+          backgroundColor: '#ff7b72',
+          barPercentage: 0.4
+        },
+        {
+          label: 'Joined',
+          data: [0, 0, 4],
+          backgroundColor: '#b3e283',
+          barPercentage: 0.4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          min: 0,
+          max: 4,
+          ticks: { stepSize: 1 },
+          title: { display: true, text: 'Employees Count', font: { size: 11 } },
+          grid: { color: '#ebf0f5' }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function updateChartsData() {
+  // Sync department counts
+  const appDeckCount = employees.filter(e => e.dept === 'App Deck').length;
+  const hrCount = employees.filter(e => e.dept === 'HR Team').length;
+  const suppCount = employees.filter(e => e.dept === 'Support').length;
+  deptChartInst.data.datasets[0].data = [appDeckCount, hrCount, suppCount];
+  deptChartInst.update();
+
+  // Sync location counts
+  const detroitCount = employees.filter(e => e.loc === 'Detroit').length;
+  const grandCount = employees.filter(e => e.loc === 'Grand Rapids city').length;
+  const warrenCount = employees.filter(e => e.loc === 'Warren city').length;
+  const total = employees.length || 1;
+
+  const pDetroit = ((detroitCount / total) * 100).toFixed(1);
+  const pGrand = ((grandCount / total) * 100).toFixed(1);
+  const pWarren = (100 - pDetroit - pGrand).toFixed(1);
+
+  locChartInst.data.datasets[0].data = [pDetroit, pGrand, pWarren];
+  locChartInst.update();
+
+  document.getElementById('pctDetroit').textContent = pDetroit + '%';
+  document.getElementById('pctGrand').textContent = pGrand + '%';
+  document.getElementById('pctWarren').textContent = pWarren + '%';
+}
+
+function refreshDeptChart() {
+  updateChartsData();
+  showToast('Department counts synced with live ledger.');
+}
+
+function toggleDeptChartType() {
+  const current = deptChartInst.config.type;
+  deptChartInst.config.type = current === 'bar' ? 'line' : 'bar';
+  deptChartInst.update();
+  showToast(`Switched view to ${deptChartInst.config.type.toUpperCase()}`);
+}
+
+function sortDeptData() {
+  deptChartInst.data.datasets[0].data.reverse();
+  deptChartInst.data.labels.reverse();
+  deptChartInst.update();
+}
+
+function refreshLocChart() {
+  updateChartsData();
+  showToast('Location distribution recalculated.');
+}
+
+function regenerateLocationRatios() {
+  const r1 = Math.floor(Math.random() * 40) + 20;
+  const r2 = Math.floor(Math.random() * 30) + 20;
+  const r3 = 100 - r1 - r2;
+
+  locChartInst.data.datasets[0].data = [r1, r2, r3];
+  locChartInst.update();
+
+  document.getElementById('pctDetroit').textContent = r1 + '%';
+  document.getElementById('pctGrand').textContent = r2 + '%';
+  document.getElementById('pctWarren').textContent = r3 + '%';
+  showToast('Location weights simulated.');
+}
+
+function toggleLocLegend(cb) {
+  locChartInst.data.datasets[0].hidden = !cb.checked;
+  locChartInst.update();
+}
+
+function refreshJoineeChart() {
+  joineeChartInst.data.datasets[0].data = [1, 0, 2];
+  joineeChartInst.data.datasets[1].data = [2, 3, 4];
+  joineeChartInst.update();
+  showToast('Attrition chart refreshed.');
+}
+
+// ================= DRILL DOWN ACTION =================
+function drillDownJoinees() {
+  const tbody = document.getElementById('drillTableBody');
+  tbody.innerHTML = `
+    <tr>
+      <td><strong>Michael Chang</strong></td>
+      <td>App Deck</td>
+      <td><span class="badge resigned">Resigned</span></td>
+      <td>2024-01-14</td>
+    </tr>
+    <tr>
+      <td><strong>Laura Dern</strong></td>
+      <td>Support</td>
+      <td><span class="badge resigned">Resigned</span></td>
+      <td>2024-01-22</td>
+    </tr>
+    <tr>
+      <td><strong>Nina Simone</strong></td>
+      <td>Support</td>
+      <td><span class="badge joined">Joined</span></td>
+      <td>2024-01-29</td>
+    </tr>
+  `;
+  document.getElementById('drillTitle').textContent = 'Audit Data: Jan Joinees & Resignees';
+  openModal('drillDownModal');
+}
+
+// ================= EXPORT CSV HELPER =================
+function exportData(type) {
+  let csv = 'ID,Name,Department,Role,Location\n';
+  employees.forEach(e => {
+    csv += `"${e.id}","${e.name}","${e.dept}","${e.role}","${e.loc}"\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${type}_export_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  showToast(`Exported ${type} dataset as CSV`);
+}
+
+// ================= MODAL & TOAST UTILITIES =================
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+function showToast(msg, type = 'normal') {
+  const box = document.getElementById('toastBox');
+  const el = document.createElement('div');
+  el.className = 'toast-box';
+  el.innerHTML = `<i class="fa-solid fa-circle-check" style="color:${type==='warning'?'#f59e0b':'#3898ec'};"></i> <span>${msg}</span>`;
+  box.appendChild(el);
+  setTimeout(() => { el.remove(); }, 3200);
 }
 </script>
 </body>
