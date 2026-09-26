@@ -2,913 +2,701 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PeoplePulse HRMS</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Human Resource Management — Enterprise Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-:root{
-  --blue:#2E5EEA; --blue-dark:#1E3FBF; --navy:#0F1B33; --navy-2:#16264A;
-  --bg:#F3F5F9; --card:#FFFFFF; --border:#E4E8F0; --text:#101828; --text-2:#5C6579; --text-3:#8A93A6;
-  --success:#12875A; --success-bg:#E7F7EF; --warning:#B25E09; --warning-bg:#FDF1DF;
-  --danger:#C0293C; --danger-bg:#FCE9EB;
-  --shadow:0 1px 2px rgba(16,24,40,.04), 0 4px 12px rgba(16,24,40,.06);
-  --radius:14px; --sidebar-w:250px; --sidebar-w-collapsed:76px; --header-h:64px;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-}
-:root:not([data-theme="light"]){ }
-:root[data-theme="dark"]{
-  --bg:#0B1220; --card:#121B2E; --border:#22304A; --text:#EAF0FA; --text-2:#9AA7C2; --text-3:#6E7A96;
-  --success-bg:#0F2A20; --warning-bg:#2E2210; --danger-bg:#2E1418;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]):not([data-theme="dark"]){
-    --bg:#0B1220; --card:#121B2E; --border:#22304A; --text:#EAF0FA; --text-2:#9AA7C2; --text-3:#6E7A96;
-    --success-bg:#0F2A20; --warning-bg:#2E2210; --danger-bg:#2E1418;
+  :root {
+    --app-blue: #3898ec;
+    --sidebar-bg: #2d3340;
+    --sidebar-active: #3b82f6;
+    --sidebar-hover: #373e4d;
+    --sidebar-text: #a4b0c2;
+    --border-color: #e5e9f0;
+    --bg-main: #f5f7fb;
+    --text-primary: #333333;
+    --text-muted: #778ca3;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
-}
-*{box-sizing:border-box; margin:0; padding:0;}
-html{scroll-padding-top:env(safe-area-inset-top,0px); height:100%;}
-body{height:100%; font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; transition:background .2s,color .2s;}
-.mono{font-family:'JetBrains Mono',monospace;}
-button{font-family:inherit; cursor:pointer;}
-a{color:inherit; text-decoration:none;}
-::-webkit-scrollbar{width:8px; height:8px;}
-::-webkit-scrollbar-thumb{background:var(--border); border-radius:8px;}
-@media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms !important; transition-duration:.01ms !important;} }
 
-/* ---------- App shell ---------- */
-#app{display:none; height:100%;}
-#app.ready{display:block;}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: #eef1f6;
+    color: var(--text-primary);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 12px;
+    min-height: 100vh;
+  }
 
-/* ---------- Login ---------- */
-#login-screen{min-height:100%; display:flex; align-items:center; justify-content:center; background:
-  radial-gradient(circle at 15% 20%, rgba(46,94,234,.16), transparent 45%),
-  radial-gradient(circle at 85% 80%, rgba(15,27,51,.12), transparent 45%), var(--bg); padding:24px;}
-.login-card{width:100%; max-width:400px; background:var(--card); border:1px solid var(--border); border-radius:20px; box-shadow:var(--shadow); padding:38px 34px;}
-.brand{display:flex; align-items:center; gap:10px; margin-bottom:28px;}
-.brand-mark{width:38px; height:38px; border-radius:10px; background:linear-gradient(135deg,var(--blue),var(--navy)); position:relative; flex:none;}
-.brand-mark::before{content:''; position:absolute; inset:0; border-radius:10px; background:
-  radial-gradient(circle 3px at 10px 12px,#fff,transparent),
-  radial-gradient(circle 3px at 22px 9px,#fff,transparent),
-  radial-gradient(circle 3px at 16px 26px,#fff,transparent);}
-.brand-name{font-weight:800; font-size:18px; letter-spacing:-.01em;}
-.brand-sub{font-size:11px; color:var(--text-3); font-weight:600; letter-spacing:.04em;}
-.login-card h1{font-size:22px; font-weight:700; margin-bottom:4px;}
-.login-card p.tag{color:var(--text-2); font-size:13.5px; margin-bottom:26px;}
-.field{margin-bottom:16px;}
-.field label{display:block; font-size:12.5px; font-weight:600; margin-bottom:6px; color:var(--text-2);}
-.field input, .field select{width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font-size:14px; outline:none; transition:border-color .15s, box-shadow .15s;}
-.field input:focus, .field select:focus{border-color:var(--blue); box-shadow:0 0 0 3px rgba(46,94,234,.15);}
-.field-hint{font-size:11.5px; color:var(--text-3); margin-top:5px;}
-.btn{border:none; border-radius:10px; padding:10px 16px; font-size:14px; font-weight:600; display:inline-flex; align-items:center; justify-content:center; gap:7px; transition:transform .08s ease, box-shadow .15s, background .15s, opacity .15s;}
-.btn:active{transform:scale(.97);}
-.btn-primary{background:var(--blue); color:#fff; box-shadow:0 1px 2px rgba(46,94,234,.3);}
-.btn-primary:hover{background:var(--blue-dark);}
-.btn-primary:disabled{opacity:.6; cursor:not-allowed;}
-.btn-block{width:100%;}
-.btn-ghost{background:transparent; color:var(--text-2); border:1px solid var(--border);}
-.btn-ghost:hover{background:var(--bg);}
-.btn-sm{padding:6px 11px; font-size:12.5px; border-radius:8px;}
-.btn-danger{background:var(--danger); color:#fff;}
-.btn-danger:hover{opacity:.9;}
-.login-demo{margin-top:18px; padding:12px 13px; border-radius:10px; background:var(--bg); border:1px dashed var(--border); font-size:12px; color:var(--text-2); line-height:1.5;}
-.err-text{color:var(--danger); font-size:12px; margin-top:6px; display:none;}
-.strength{height:4px; border-radius:2px; background:var(--border); margin-top:6px; overflow:hidden;}
-.strength i{display:block; height:100%; width:0%; background:var(--danger); transition:width .2s, background .2s;}
+  /* App Window Container */
+  .window-container {
+    width: 100%;
+    max-width: 1440px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #d8dee8;
+  }
 
-/* ---------- Layout ---------- */
-.shell{display:flex; height:100%;}
-.sidebar{width:var(--sidebar-w); flex:none; background:linear-gradient(180deg,var(--navy),var(--navy-2)); color:#DDE4F5; height:100%; overflow-y:auto; transition:width .22s ease; position:relative; z-index:40;}
-.shell.collapsed .sidebar{width:var(--sidebar-w-collapsed);}
-.side-head{display:flex; align-items:center; gap:10px; padding:18px 18px; height:var(--header-h); border-bottom:1px solid rgba(255,255,255,.08);}
-.side-head .brand-name{color:#fff;}
-.side-head .brand-sub{color:#8FA3D6;}
-.shell.collapsed .side-head .brand-name, .shell.collapsed .side-head .brand-sub{display:none;}
-.nav{padding:10px 10px 24px;}
-.nav-group{margin-bottom:2px;}
-.nav-item{display:flex; align-items:center; gap:11px; padding:9px 11px; border-radius:9px; color:#B9C4E0; font-size:13.5px; font-weight:500; cursor:pointer; white-space:nowrap; position:relative;}
-.nav-item:hover{background:rgba(255,255,255,.06); color:#fff;}
-.nav-item.active{background:rgba(46,94,234,.35); color:#fff;}
-.nav-item .ic{width:18px; height:18px; flex:none; display:flex; align-items:center; justify-content:center;}
-.nav-item .chev{margin-left:auto; font-size:10px; transition:transform .15s;}
-.nav-item.expanded .chev{transform:rotate(90deg);}
-.shell.collapsed .nav-item span.lbl, .shell.collapsed .nav-item .chev{display:none;}
-.sub-nav{max-height:0; overflow:hidden; transition:max-height .2s ease;}
-.sub-nav.open{max-height:400px;}
-.sub-nav .nav-item{padding-left:38px; font-size:12.8px;}
-.shell.collapsed .sub-nav{display:none;}
+  /* Mac Window Top Bar */
+  .window-header {
+    height: 34px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .window-dots {
+    display: flex;
+    gap: 7px;
+  }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dot.red { background: #ff5f56; }
+  .dot.yellow { background: #ffbd2e; }
+  .dot.green { background: #27c93f; }
 
-.main{flex:1; min-width:0; display:flex; flex-direction:column; height:100%;}
-.topbar{height:var(--header-h); flex:none; background:var(--card); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:14px; padding:0 20px; position:sticky; top:0; z-index:30;}
-.icon-btn{width:36px; height:36px; border-radius:9px; border:1px solid var(--border); background:var(--card); color:var(--text-2); display:flex; align-items:center; justify-content:center; position:relative; transition:background .15s,color .15s;}
-.icon-btn:hover{background:var(--bg); color:var(--text);}
-.search-wrap{flex:1; max-width:420px; position:relative;}
-.search-wrap input{width:100%; padding:9px 12px 9px 36px; border-radius:10px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:13.5px;}
-.search-wrap svg{position:absolute; left:11px; top:50%; transform:translateY(-50%); opacity:.5;}
-.search-results{position:absolute; top:calc(100% + 6px); left:0; right:0; background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); max-height:320px; overflow:auto; display:none; z-index:50;}
-.search-results.show{display:block;}
-.sr-group{padding:8px 12px 4px; font-size:11px; font-weight:700; color:var(--text-3);}
-.sr-item{padding:8px 14px; font-size:13px; display:flex; justify-content:space-between; gap:8px;}
-.sr-item:hover{background:var(--bg);}
-.badge-dot{position:absolute; top:6px; right:6px; width:8px; height:8px; border-radius:50%; background:var(--danger); border:2px solid var(--card);}
-.spacer{flex:1;}
-.avatar{width:34px; height:34px; border-radius:9px; background:linear-gradient(135deg,var(--blue),var(--navy)); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex:none;}
-.user-btn{display:flex; align-items:center; gap:9px; padding:5px 9px 5px 5px; border-radius:10px; border:1px solid transparent;}
-.user-btn:hover{background:var(--bg); border-color:var(--border);}
-.user-meta{text-align:left; line-height:1.25;}
-.user-meta .n{font-size:13px; font-weight:600;}
-.user-meta .r{font-size:11px; color:var(--text-3);}
-.dropdown{position:relative;}
-.dropdown-panel{position:absolute; right:0; top:calc(100% + 8px); background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); min-width:200px; padding:6px; display:none; z-index:60;}
-.dropdown-panel.show{display:block; animation:pop .12s ease;}
-.dropdown-panel a, .dropdown-panel button{display:flex; align-items:center; gap:9px; width:100%; text-align:left; padding:9px 10px; border-radius:8px; font-size:13px; background:transparent; border:none; color:var(--text);}
-.dropdown-panel a:hover, .dropdown-panel button:hover{background:var(--bg);}
-@keyframes pop{from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:translateY(0);}}
+  /* App Navigation Bar */
+  .app-header {
+    height: 44px;
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    font-size: 0.85rem;
+  }
+  .app-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #4b5563;
+    font-weight: 600;
+  }
+  .app-logo-badge {
+    width: 24px;
+    height: 24px;
+    border: 1px solid #c9d6df;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3b82f6;
+    font-size: 0.8rem;
+  }
+  .device-switchers {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    height: 100%;
+  }
+  .device-btn {
+    color: #8b99ad;
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 10px 4px 6px;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+  }
+  .device-btn.active {
+    color: var(--app-blue);
+    border-bottom-color: var(--app-blue);
+  }
+  .app-quick-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: #5d7186;
+    font-size: 0.78rem;
+  }
+  .app-quick-actions a {
+    color: #4383d4;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .app-quick-actions a:hover { text-decoration: underline; }
 
-.content{flex:1; overflow-y:auto; padding:22px 24px 60px;}
-.page{display:none; animation:fadein .25s ease;}
-.page.active{display:block;}
-@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
-.page-head{display:flex; align-items:flex-end; justify-content:space-between; gap:14px; margin-bottom:20px; flex-wrap:wrap;}
-.page-head h1{font-size:21px; font-weight:800; letter-spacing:-.01em;}
-.page-head p{color:var(--text-2); font-size:13px; margin-top:3px;}
-.crumb{font-size:12px; color:var(--text-3); margin-bottom:6px;}
+  /* Workspace Layout */
+  .app-body {
+    display: flex;
+    min-height: 720px;
+    background: var(--bg-main);
+  }
 
-/* ---------- Cards / KPIs ---------- */
-.kpi-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; margin-bottom:22px;}
-.card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px; transition:transform .15s ease, box-shadow .15s ease;}
-.kpi{cursor:default;}
-.kpi:hover{transform:translateY(-3px); box-shadow:0 8px 20px rgba(16,24,40,.09);}
-.kpi-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
-.kpi-ic{width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center;}
-.kpi-num{font-size:26px; font-weight:800; letter-spacing:-.02em; font-variant-numeric:tabular-nums;}
-.kpi-label{font-size:12.5px; color:var(--text-2); margin-top:2px;}
-.kpi-delta{font-size:11.5px; font-weight:700; padding:2px 7px; border-radius:20px; display:inline-flex; align-items:center; gap:3px;}
-.up{color:var(--success); background:var(--success-bg);}
-.down{color:var(--danger); background:var(--danger-bg);}
+  /* Left Sidebar */
+  .sidebar {
+    width: 215px;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .sidebar-header {
+    padding: 14px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #f1f4f9;
+    border-bottom: 1px solid #383f4f;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-menu {
+    list-style: none;
+    padding: 6px 0;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 9px 16px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    color: #b5c0d0;
+    position: relative;
+    user-select: none;
+  }
+  .nav-item:hover {
+    background: var(--sidebar-hover);
+    color: #ffffff;
+  }
+  .nav-item.active {
+    background: #3e8cee;
+    color: #ffffff;
+    font-weight: 600;
+  }
+  .nav-item i.nav-icon {
+    width: 20px;
+    font-size: 0.82rem;
+    margin-right: 8px;
+    text-align: center;
+  }
+  .nav-item .arrow {
+    margin-left: auto;
+    font-size: 0.65rem;
+    color: #6c798e;
+  }
+  .nav-item.active .arrow { color: #ffffff; }
 
-.grid-2{display:grid; grid-template-columns:2fr 1fr; gap:14px; margin-bottom:14px;}
-.grid-2b{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;}
-@media (max-width:920px){.grid-2, .grid-2b{grid-template-columns:1fr;}}
-.card-h{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
-.card-h h3{font-size:14.5px; font-weight:700;}
-.card-h .sub{font-size:11.5px; color:var(--text-3);}
-.chart-box{position:relative; height:230px;}
-.chart-box.small{height:200px;}
+  /* Main Dashboard Panel */
+  .main-content {
+    flex: 1;
+    padding: 16px 20px;
+    overflow-x: hidden;
+  }
 
-.timeline{display:flex; flex-direction:column; gap:14px;}
-.tl-item{display:flex; gap:11px;}
-.tl-dot{width:9px; height:9px; border-radius:50%; background:var(--blue); margin-top:5px; flex:none;}
-.tl-body p{font-size:13px;}
-.tl-body span{font-size:11.5px; color:var(--text-3);}
+  /* Top Stat KPI Cards */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .kpi-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 16px 14px;
+    display: flex;
+    position: relative;
+    box-shadow: var(--card-shadow);
+  }
+  .kpi-left-bar {
+    position: absolute;
+    left: 0;
+    top: 14px;
+    bottom: 14px;
+    width: 5px;
+    background: #3898ec;
+    border-radius: 0 3px 3px 0;
+  }
+  .kpi-details {
+    flex: 1;
+    text-align: center;
+    padding-left: 6px;
+  }
+  .kpi-number {
+    font-size: 2.1rem;
+    font-weight: 300;
+    color: #3b82f6;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .kpi-title {
+    font-size: 0.76rem;
+    color: #657488;
+    font-weight: 500;
+  }
 
-.event-item{display:flex; align-items:center; gap:11px; padding:9px 0; border-bottom:1px solid var(--border);}
-.event-item:last-child{border-bottom:none;}
-.event-date{width:42px; height:42px; border-radius:10px; background:var(--bg); display:flex; flex-direction:column; align-items:center; justify-content:center; font-weight:700; font-size:11px; flex:none; color:var(--blue);}
-.event-date span{font-size:15px;}
-.event-txt p{font-size:13px; font-weight:600;}
-.event-txt span{font-size:11.5px; color:var(--text-3);}
+  /* Dashboard Cards Grid */
+  .charts-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .chart-panel {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: var(--card-shadow);
+    padding: 16px;
+  }
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .chart-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #3b4554;
+  }
+  .chart-toolbar {
+    display: flex;
+    gap: 4px;
+  }
+  .tool-btn {
+    background: #ffffff;
+    border: 1px solid #d2d9e2;
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-size: 0.72rem;
+    color: #556275;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .tool-btn:hover { background: #f8fafc; border-color: #bcc6d3; }
 
-/* ---------- Table ---------- */
-.toolbar{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; align-items:center;}
-.toolbar input, .toolbar select{padding:8px 11px; border-radius:9px; border:1px solid var(--border); background:var(--card); color:var(--text); font-size:13px;}
-.table-wrap{overflow-x:auto; border-radius:var(--radius); border:1px solid var(--border); background:var(--card);}
-table{width:100%; border-collapse:collapse; min-width:880px;}
-th{text-align:left; font-size:11.5px; text-transform:none; color:var(--text-3); font-weight:700; padding:12px 14px; border-bottom:1px solid var(--border); cursor:pointer; white-space:nowrap; user-select:none;}
-th:hover{color:var(--text);}
-td{padding:11px 14px; font-size:13px; border-bottom:1px solid var(--border); white-space:nowrap;}
-tr:last-child td{border-bottom:none;}
-tbody tr:hover{background:var(--bg);}
-.emp-cell{display:flex; align-items:center; gap:10px;}
-.emp-cell .av{width:30px; height:30px; border-radius:8px; font-size:11.5px;}
-.emp-name{font-weight:600;}
-.emp-id{color:var(--text-3); font-size:11.5px;}
-.badge{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:20px;}
-.b-green{background:var(--success-bg); color:var(--success);}
-.b-amber{background:var(--warning-bg); color:var(--warning);}
-.b-red{background:var(--danger-bg); color:var(--danger);}
-.row-actions{display:flex; gap:6px;}
-.act-btn{width:28px; height:28px; border-radius:7px; border:1px solid var(--border); background:var(--card); color:var(--text-2); display:flex; align-items:center; justify-content:center;}
-.act-btn:hover{background:var(--bg); color:var(--text);}
-.pagination{display:flex; align-items:center; justify-content:space-between; padding:12px 14px; font-size:12.5px; color:var(--text-2); flex-wrap:wrap; gap:10px;}
-.page-btns{display:flex; gap:5px;}
-.page-btns button{width:28px; height:28px; border-radius:7px; border:1px solid var(--border); background:var(--card); font-size:12px; color:var(--text-2);}
-.page-btns button.active{background:var(--blue); color:#fff; border-color:var(--blue);}
+  /* Bottom Full Width Card */
+  .bottom-chart-panel {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: var(--card-shadow);
+    padding: 16px;
+    position: relative;
+  }
 
-/* ---------- Placeholder module ---------- */
-.placeholder{border:1px dashed var(--border); border-radius:var(--radius); background:var(--card); padding:44px 24px; text-align:center;}
-.placeholder .ic{width:52px; height:52px; border-radius:14px; background:var(--bg); display:flex; align-items:center; justify-content:center; margin:0 auto 14px; color:var(--blue);}
-.placeholder h3{font-size:15.5px; margin-bottom:6px;}
-.placeholder p{font-size:13px; color:var(--text-2); max-width:420px; margin:0 auto 16px;}
-.chip-row{display:flex; gap:8px; flex-wrap:wrap; justify-content:center;}
-.chip{font-size:11.5px; padding:5px 10px; border-radius:20px; background:var(--bg); color:var(--text-2); border:1px solid var(--border);}
+  /* Custom Hover / Tooltip Card Overlay (as pictured) */
+  .mock-tooltip {
+    position: absolute;
+    right: 180px;
+    bottom: 26px;
+    background: #ffffff;
+    border: 1px solid #ff7b72;
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: #333;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    z-index: 10;
+  }
+  .mock-tooltip strong { color: #111; }
+  .mock-tooltip .note { color: #8892a0; font-size: 0.65rem; margin-top: 4px; }
 
-/* ---------- Modal ---------- */
-.modal-overlay{position:fixed; inset:0; background:rgba(10,14,24,.5); display:none; align-items:center; justify-content:center; z-index:200; padding:20px;}
-.modal-overlay.show{display:flex;}
-.modal{background:var(--card); border-radius:16px; width:100%; max-width:480px; box-shadow:0 20px 60px rgba(0,0,0,.25); transform:scale(.96); opacity:0; transition:transform .16s ease, opacity .16s ease; max-height:88vh; display:flex; flex-direction:column;}
-.modal-overlay.show .modal{transform:scale(1); opacity:1;}
-.modal-head{display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--border);}
-.modal-head h3{font-size:15.5px; font-weight:700;}
-.modal-body{padding:18px 20px; overflow-y:auto;}
-.modal-foot{padding:16px 20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:9px;}
-.steps-track{display:flex; gap:6px; margin-bottom:16px;}
-.steps-track i{flex:1; height:4px; border-radius:2px; background:var(--border);}
-.steps-track i.on{background:var(--blue);}
-.step-panel{display:none;}
-.step-panel.active{display:block;}
-.form-row{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
-@media(max-width:480px){.form-row{grid-template-columns:1fr;}}
+  /* Legend Container in Right Pie */
+  .pie-legend-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .pie-checklist {
+    font-size: 0.73rem;
+    color: #4b5563;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .pie-check-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .badge-sq {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    display: inline-block;
+  }
 
-/* ---------- Toasts ---------- */
-#toast-stack{position:fixed; bottom:20px; right:20px; z-index:300; display:flex; flex-direction:column; gap:10px; max-width:320px;}
-.toast{background:var(--navy); color:#fff; padding:12px 14px; border-radius:11px; font-size:13px; display:flex; gap:10px; align-items:flex-start; box-shadow:0 10px 28px rgba(0,0,0,.25); animation:toastin .2s ease;}
-.toast.success{background:#12875A;} .toast.error{background:#C0293C;} .toast.info{background:var(--navy);}
-@keyframes toastin{from{opacity:0; transform:translateX(20px);} to{opacity:1; transform:translateX(0);}}
-
-/* ---------- Skeleton ---------- */
-.skel{background:linear-gradient(90deg,var(--border) 25%, var(--bg) 37%, var(--border) 63%); background-size:400% 100%; animation:shimmer 1.3s infinite; border-radius:8px;}
-@keyframes shimmer{0%{background-position:100% 0;} 100%{background-position:0 0;}}
-
-/* ---------- Mobile ---------- */
-.hamburger{display:none;}
-@media (max-width:880px){
-  .sidebar{position:fixed; left:0; top:0; bottom:0; transform:translateX(-100%); width:250px !important;}
-  .shell.mobile-open .sidebar{transform:translateX(0); box-shadow:0 0 40px rgba(0,0,0,.3);}
-  .hamburger{display:flex;}
-  .grid-2{grid-template-columns:1fr;}
-  .search-wrap{max-width:none;}
-  .user-meta{display:none;}
-}
-.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0);}
-:focus-visible{outline:2px solid var(--blue); outline-offset:2px;}
+  /* Responsive Adjustments */
+  @media (max-width: 1080px) {
+    .kpi-row { grid-template-columns: repeat(3, 1fr); }
+    .charts-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .kpi-row { grid-template-columns: 1fr 1fr; }
+    .sidebar { display: none; }
+    body { padding: 0; }
+  }
 </style>
 </head>
 <body>
 
-<!-- ===================== LOGIN ===================== -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="brand">
-      <div class="brand-mark"></div>
-      <div><div class="brand-name">PeoplePulse</div><div class="brand-sub">HRMS</div></div>
-    </div>
-    <h1>Welcome back</h1>
-    <p class="tag">Manage People. Simplify Work. Grow Together.</p>
-    <form id="login-form" novalidate>
-      <div class="field">
-        <label for="login-email">Work email</label>
-        <input id="login-email" type="email" autocomplete="username" value="priya.sharma@peoplepulse.com" required>
-        <div class="err-text" id="err-email">Enter a valid email address.</div>
-      </div>
-      <div class="field">
-        <label for="login-pass">Password</label>
-        <input id="login-pass" type="password" autocomplete="current-password" value="Demo@1234" required>
-        <div class="strength"><i id="strength-bar"></i></div>
-        <div class="err-text" id="err-pass">Password must be at least 8 characters.</div>
-      </div>
-      <button type="submit" class="btn btn-primary btn-block" id="login-btn">Sign in</button>
-    </form>
-    <div class="login-demo">
-      <strong>Demo mode:</strong> this login is a mocked, client-side simulation for demonstration only. Any email/password combination signs you in as HR Manager Priya Sharma. See the note at the end of the chat for how real authentication is designed.
+<div class="window-container">
+  <!-- Window Top Bar Controls -->
+  <div class="window-header">
+    <div class="window-dots">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
     </div>
   </div>
-</div>
 
-<!-- ===================== APP ===================== -->
-<div id="app">
-<div class="shell" id="shell">
-
-  <aside class="sidebar" id="sidebar">
-    <div class="side-head">
-      <div class="brand-mark" style="width:32px;height:32px;"></div>
-      <div><div class="brand-name" style="font-size:15px;">PeoplePulse</div><div class="brand-sub" style="font-size:10px;">HRMS</div></div>
+  <!-- App Header Bar -->
+  <div class="app-header">
+    <div class="app-title-group">
+      <div class="app-logo-badge"><i class="fa-solid fa-layer-group"></i></div>
+      <span>Human Resource Management</span>
     </div>
-    <nav class="nav" id="nav-root"></nav>
-  </aside>
 
-  <div class="main">
-    <header class="topbar">
-      <button class="icon-btn hamburger" id="mobile-toggle" aria-label="Toggle menu">☰</button>
-      <button class="icon-btn" id="collapse-toggle" aria-label="Collapse sidebar" title="Collapse sidebar">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      </button>
-      <div class="search-wrap">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        <input type="text" id="global-search" placeholder="Search employees, requests, reports…" aria-label="Global search">
-        <div class="search-results" id="search-results"></div>
+    <!-- Responsive View Toggles -->
+    <div class="device-switchers">
+      <a class="device-btn active" title="Desktop View"><i class="fa-solid fa-desktop"></i></a>
+      <a class="device-btn" title="Tablet View"><i class="fa-solid fa-tablet-screen-button"></i></a>
+      <a class="device-btn" title="Mobile View"><i class="fa-solid fa-mobile-screen"></i></a>
+    </div>
+
+    <!-- Utility Links -->
+    <div class="app-quick-actions">
+      <a href="#"><i class="fa-regular fa-credit-card"></i> Subscription</a>
+      <a href="#"><i class="fa-solid fa-pen"></i> Edit this application</a>
+      <a href="#" style="color:#556275;"><i class="fa-regular fa-circle-question"></i> Help</a>
+    </div>
+  </div>
+
+  <!-- App Workspace -->
+  <div class="app-body">
+    <!-- Dark Enterprise Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span>Human Resource Manag...</span>
       </div>
-      <div class="spacer"></div>
-      <button class="icon-btn" id="theme-toggle" title="Toggle theme" aria-label="Toggle dark mode">🌙</button>
-      <div class="dropdown">
-        <button class="icon-btn" id="notif-btn" aria-label="Notifications">🔔<span class="badge-dot"></span></button>
-        <div class="dropdown-panel" id="notif-panel" style="min-width:270px;"></div>
-      </div>
-      <button class="icon-btn" title="Messages" aria-label="Messages">💬</button>
-      <button class="icon-btn" title="Help" aria-label="Help">❓</button>
-      <div class="dropdown">
-        <button class="user-btn" id="user-btn">
-          <div class="avatar">PS</div>
-          <div class="user-meta"><div class="n">Priya Sharma</div><div class="r">HR Manager · Pro plan</div></div>
-        </button>
-        <div class="dropdown-panel" id="user-panel">
-          <a href="#" data-nav="profile">👤 My Profile</a>
-          <a href="#" data-nav="settings">⚙️ Settings</a>
-          <a href="#" style="justify-content:space-between;">🏷️ Subscription <span class="chip" style="margin:0;">Pro</span></a>
-          <button id="logout-btn" style="color:var(--danger);">↪ Log out</button>
+      <ul class="nav-menu">
+        <li class="nav-item active">
+          <i class="fa-solid fa-gauge nav-icon"></i>
+          <span>Admin Dashboard</span>
+        </li>
+        <li class="nav-item">
+          <i class="fa-regular fa-id-badge nav-icon"></i>
+          <span>Profile</span>
+        </li>
+        <li class="nav-item">
+          <i class="fa-regular fa-calendar-check nav-icon"></i>
+          <span>Requirement Raising</span>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </li>
+        <li class="nav-item">
+          <i class="fa-solid fa-user-plus nav-icon"></i>
+          <span>Recruitment</span>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </li>
+        <li class="nav-item">
+          <i class="fa-solid fa-users nav-icon"></i>
+          <span>Employee</span>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </li>
+        <li class="nav-item">
+          <i class="fa-regular fa-calendar-days nav-icon"></i>
+          <span>Attendance</span>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </li>
+        <li class="nav-item">
+          <i class="fa-solid fa-arrow-right-from-bracket nav-icon"></i>
+          <span>Leave Tracker</span>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </li>
+        <li class="nav-item">
+          <i class="fa-regular fa-clock nav-icon"></i>
+          <span>Time Tracker</span>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </li>
+        <li class="nav-item">
+          <i class="fa-regular fa-star nav-icon"></i>
+          <span>Appraisal</span>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </li>
+        <li class="nav-item">
+          <i class="fa-solid fa-bullhorn nav-icon"></i>
+          <span>Announcement</span>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </li>
+        <li class="nav-item">
+          <i class="fa-solid fa-user-xmark nav-icon"></i>
+          <span>Resignation</span>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </li>
+        <li class="nav-item">
+          <i class="fa-solid fa-gear nav-icon"></i>
+          <span>Settings</span>
+          <i class="fa-solid fa-chevron-right arrow"></i>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Analytics Content -->
+    <main class="main-content">
+      <!-- Top 5 Stat Cards with Left Accent -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-left-bar"></div>
+          <div class="kpi-details">
+            <div class="kpi-number">95</div>
+            <div class="kpi-title">Requirements</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-left-bar"></div>
+          <div class="kpi-details">
+            <div class="kpi-number">6</div>
+            <div class="kpi-title">Applicants</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-left-bar"></div>
+          <div class="kpi-details">
+            <div class="kpi-number">3</div>
+            <div class="kpi-title">Selected</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-left-bar"></div>
+          <div class="kpi-details">
+            <div class="kpi-number">3</div>
+            <div class="kpi-title">On Boarding</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-left-bar"></div>
+          <div class="kpi-details">
+            <div class="kpi-number">12</div>
+            <div class="kpi-title">Employees</div>
+          </div>
         </div>
       </div>
-    </header>
 
-    <main class="content" id="content"></main>
+      <!-- Mid Charts Grid -->
+      <div class="charts-row">
+        <!-- Employees By Department -->
+        <div class="chart-panel">
+          <div class="chart-header">
+            <span class="chart-title">Employees By Department</span>
+            <div class="chart-toolbar">
+              <button class="tool-btn" onclick="updateDeptChart()"><i class="fa-solid fa-arrow-rotate-right"></i> Refresh</button>
+              <button class="tool-btn"><i class="fa-solid fa-chart-column"></i></button>
+              <button class="tool-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+              <button class="tool-btn">Sort</button>
+            </div>
+          </div>
+          <div style="height: 230px; position: relative;">
+            <canvas id="deptBarChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Employees By Location -->
+        <div class="chart-panel">
+          <div class="chart-header">
+            <span class="chart-title">Employees By Location</span>
+            <div class="chart-toolbar">
+              <button class="tool-btn"><i class="fa-solid fa-arrow-rotate-right"></i> Refresh</button>
+              <button class="tool-btn"><i class="fa-solid fa-chart-pie"></i></button>
+              <button class="tool-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+              <button class="tool-btn">Sort</button>
+            </div>
+          </div>
+          <div style="margin-bottom: 8px;">
+            <button class="tool-btn" style="padding: 2px 7px; font-size: 0.7rem;">Regenerate</button>
+          </div>
+          <div class="pie-legend-wrapper">
+            <div style="width: 170px; height: 170px; flex-shrink: 0;">
+              <canvas id="locationPieChart"></canvas>
+            </div>
+            <div class="pie-checklist">
+              <div class="pie-check-item">
+                <input type="checkbox" checked> <strong>Location</strong>
+              </div>
+              <div class="pie-check-item" style="padding-left:12px;">
+                <span class="badge-sq" style="background:#ff6d60;"></span> Detroit
+              </div>
+              <div class="pie-check-item" style="padding-left:12px;">
+                <span class="badge-sq" style="background:#a8e063;"></span> Grand Rapids city
+              </div>
+              <div class="pie-check-item" style="padding-left:12px;">
+                <span class="badge-sq" style="background:#5da3ff;"></span> Warren city
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Chart: Monthly Joinees and Resignees -->
+      <div class="bottom-chart-panel">
+        <div class="chart-header">
+          <span class="chart-title">Monthly Joinees and Resignees</span>
+          <div class="chart-toolbar">
+            <button class="tool-btn"><i class="fa-solid fa-arrow-rotate-right"></i> Refresh</button>
+            <button class="tool-btn"><i class="fa-solid fa-chart-column"></i></button>
+            <button class="tool-btn"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
+            <button class="tool-btn">Sort</button>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-bottom:4px; font-size:0.72rem;">
+          <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" checked> Status</label>
+          <span style="display:flex; align-items:center; gap:4px;"><span class="badge-sq" style="background:#b3e283;"></span> Joined</span>
+          <span style="display:flex; align-items:center; gap:4px;"><span class="badge-sq" style="background:#ff7b72;"></span> Resigned</span>
+        </div>
+
+        <div style="height: 180px; position: relative;">
+          <canvas id="joineeChart"></canvas>
+        </div>
+
+        <!-- Custom Tooltip Callout -->
+        <div class="mock-tooltip">
+          <div>Current Year: <strong>Jan</strong></div>
+          <div>Employees Count: <strong>2</strong></div>
+          <div>Status: <strong>Resigned</strong></div>
+          <div class="note">Click to: View Underlying Data / Drill Down</div>
+        </div>
+      </div>
+    </main>
   </div>
 </div>
-</div>
-
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal" id="modal-box"></div>
-</div>
-<div id="toast-stack" aria-live="polite"></div>
 
 <script>
-(function(){
-
-/* ---------------- Theme ---------------- */
-const root = document.documentElement;
-try{
-  const saved = localStorage.getItem('pp_theme');
-  if(saved) root.setAttribute('data-theme', saved);
-}catch(e){}
-document.getElementById('theme-toggle').addEventListener('click', ()=>{
-  const cur = root.getAttribute('data-theme') === 'dark' ? 'dark' : (root.getAttribute('data-theme')==='light'?'light':(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
-  const next = cur === 'dark' ? 'light' : 'dark';
-  root.setAttribute('data-theme', next);
-  document.getElementById('theme-toggle').textContent = next==='dark' ? '☀️' : '🌙';
-  try{ localStorage.setItem('pp_theme', next); }catch(e){}
-  if(window.Chart) refreshChartTheme();
-});
-
-/* ---------------- Toasts ---------------- */
-function toast(msg, type){
-  type = type || 'info';
-  const el = document.createElement('div');
-  el.className = 'toast ' + type;
-  el.innerHTML = (type==='success'?'✅ ':type==='error'?'⚠️ ':'ℹ️ ') + msg;
-  document.getElementById('toast-stack').appendChild(el);
-  setTimeout(()=>{ el.style.transition='opacity .25s'; el.style.opacity='0'; setTimeout(()=>el.remove(),250); }, 3200);
-}
-
-/* ---------------- Login ---------------- */
-document.getElementById('login-form').addEventListener('submit', function(e){
-  e.preventDefault();
-  const email = document.getElementById('login-email').value.trim();
-  const pass = document.getElementById('login-pass').value;
-  const okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  document.getElementById('err-email').style.display = okEmail ? 'none' : 'block';
-  document.getElementById('err-pass').style.display = pass.length>=8 ? 'none' : 'block';
-  if(!okEmail || pass.length<8) return;
-  const btn = document.getElementById('login-btn');
-  btn.disabled = true; btn.textContent = 'Signing in…';
-  setTimeout(()=>{
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('app').classList.add('ready');
-    initApp();
-  }, 700);
-});
-document.getElementById('login-pass').addEventListener('input', function(){
-  const v = this.value; let score = 0;
-  if(v.length>=8) score++; if(/[A-Z]/.test(v)) score++; if(/[0-9]/.test(v)) score++; if(/[^A-Za-z0-9]/.test(v)) score++;
-  const bar = document.getElementById('strength-bar');
-  const pct = [10,35,65,100][Math.max(0,score-1)] || 10;
-  bar.style.width = pct+'%';
-  bar.style.background = score<=1 ? '#C0293C' : score<=2 ? '#B25E09' : '#12875A';
-});
-
-/* ---------------- Nav config ---------------- */
-const NAV = [
-  {id:'dashboard', label:'Dashboard', ic:'📊'},
-  {id:'admin-dashboard', label:'Admin Dashboard', ic:'🛠️'},
-  {id:'profile', label:'Profile', ic:'👤'},
-  {id:'recruitment', label:'Recruitment', ic:'🧩', children:[
-    {id:'req', label:'Job Requisitions'}, {id:'applicants', label:'Applicants'},
-    {id:'interviews', label:'Interviews'}, {id:'offers', label:'Offers'}]},
-  {id:'employees', label:'Employees', ic:'👥', children:[
-    {id:'directory', label:'Employee Directory'}, {id:'emp-details', label:'Employee Details'},
-    {id:'org', label:'Organization'}, {id:'emp-docs', label:'Documents'}]},
-  {id:'attendance-m', label:'Attendance', ic:'🕒', children:[
-    {id:'attendance', label:'Attendance'}, {id:'checkinout', label:'Check In / Check Out'},
-    {id:'att-reports', label:'Attendance Reports'}]},
-  {id:'leave-m', label:'Leave Management', ic:'🌴', children:[
-    {id:'leave-requests', label:'Leave Requests'}, {id:'leave-balance', label:'Leave Balance'},
-    {id:'leave-types', label:'Leave Types'}, {id:'leave-calendar', label:'Leave Calendar'}]},
-  {id:'time-m', label:'Time Tracker', ic:'⏱️', children:[
-    {id:'timesheets', label:'Timesheets'}, {id:'projects', label:'Projects'}, {id:'work-hours', label:'Work Hours'}]},
-  {id:'payroll-m', label:'Payroll', ic:'💳', children:[
-    {id:'salary', label:'Salary'}, {id:'payslips', label:'Payslips'}, {id:'payroll-reports', label:'Payroll Reports'}]},
-  {id:'perf-m', label:'Performance', ic:'🎯', children:[
-    {id:'goals', label:'Goals'}, {id:'appraisals', label:'Appraisals'}, {id:'perf-reviews', label:'Performance Reviews'}]},
-  {id:'announcements', label:'Announcements', ic:'📣'},
-  {id:'resignation-m', label:'Resignation', ic:'🚪', children:[
-    {id:'resignation-requests', label:'Resignation Requests'}, {id:'exit-process', label:'Exit Process'}]},
-  {id:'reports', label:'Reports', ic:'📈'},
-  {id:'settings', label:'Settings', ic:'⚙️'}
-];
-
-function buildNav(){
-  const root = document.getElementById('nav-root');
-  root.innerHTML = NAV.map(item=>{
-    if(item.children){
-      return `<div class="nav-group">
-        <div class="nav-item" data-toggle="${item.id}"><span class="ic">${item.ic}</span><span class="lbl">${item.label}</span><span class="chev">▸</span></div>
-        <div class="sub-nav" id="sub-${item.id}">${item.children.map(c=>`<div class="nav-item" data-nav="${c.id}"><span class="ic"></span><span class="lbl">${c.label}</span></div>`).join('')}</div>
-      </div>`;
+// Department Bar Chart
+const deptCtx = document.getElementById('deptBarChart').getContext('2d');
+const deptBarChart = new Chart(deptCtx, {
+  type: 'bar',
+  data: {
+    labels: ['App Deck', 'HR Team\nDepartment', 'Support'],
+    datasets: [{
+      label: 'Employee Count',
+      data: [6, 3, 3],
+      backgroundColor: '#5ea2f8',
+      borderRadius: 0,
+      barPercentage: 0.65
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { family: 'Open Sans', size: 11 }, color: '#333' }
+      },
+      y: {
+        min: 0,
+        max: 6,
+        ticks: { stepSize: 2, font: { family: 'Open Sans', size: 10 } },
+        title: { display: true, text: 'Employee Count', font: { size: 11 } },
+        grid: { color: '#ebf0f5', strokeDashArray: [3, 3] }
+      }
     }
-    return `<div class="nav-item" data-nav="${item.id}"><span class="ic">${item.ic}</span><span class="lbl">${item.label}</span></div>`;
-  }).join('');
-
-  root.querySelectorAll('[data-toggle]').forEach(el=>{
-    el.addEventListener('click', ()=>{
-      el.classList.toggle('expanded');
-      document.getElementById('sub-'+el.dataset.toggle).classList.toggle('open');
-    });
-  });
-  root.querySelectorAll('[data-nav]').forEach(el=>{
-    el.addEventListener('click', ()=> navigate(el.dataset.nav));
-  });
-  document.querySelectorAll('[data-nav="profile"], [data-nav="settings"]').forEach(el=>{
-    el.addEventListener('click', (e)=>{ closeDropdowns(); });
-  });
-}
-
-/* ---------------- Demo data ---------------- */
-const DEPTS = ['Engineering','HR','Finance','Operations','Sales','Support'];
-const LOCS = ['Chennai','Bangalore','Hyderabad','Mumbai','Delhi'];
-const DESIGS = {Engineering:['Software Engineer','Senior Engineer','Engineering Manager'], HR:['HR Executive','HR Manager'], Finance:['Accountant','Finance Analyst'], Operations:['Ops Executive','Ops Manager'], Sales:['Sales Associate','Sales Manager'], Support:['Support Agent','Support Lead']};
-const FIRST = ['Arun','Priya','Rahul','Divya','Karthik','Sneha','Vikram','Anitha','Suresh','Meera','Naveen','Lakshmi','Aditya','Pooja','Manoj','Deepa','Ganesh','Ritu','Sanjay','Kavya','Ramesh','Nisha','Ajay','Swathi'];
-const LAST = ['Kumar','Sharma','S','R','Nair','Iyer','Reddy','Menon','Rao','Gupta','Pillai','Verma'];
-const STATUS = ['Active','Active','Active','On Leave','Inactive'];
-
-function seedEmployees(n){
-  const arr=[]; 
-  for(let i=1;i<=n;i++){
-    const dept = DEPTS[i % DEPTS.length];
-    const desigList = DESIGS[dept];
-    const first = FIRST[i % FIRST.length], last = LAST[(i*3) % LAST.length];
-    const status = STATUS[i % STATUS.length];
-    const d = new Date(2021,  (i*7)%12, (i*3)%27+1);
-    arr.push({
-      id:'EMP'+String(i).padStart(3,'0'),
-      name:first+' '+last,
-      dept, designation:desigList[i % desigList.length],
-      email:(first+'.'+last).toLowerCase()+'@peoplepulse.com',
-      phone:'+91 9'+String(100000000+i*7919).slice(0,9),
-      location:LOCS[i % LOCS.length],
-      joined:d.toISOString().slice(0,10),
-      type: i%5===0 ? 'Contract':'Full-time',
-      status
-    });
   }
-  return arr;
-}
-const EMPLOYEES = seedEmployees(28);
+});
 
-/* ---------------- Init ---------------- */
-let charts = {};
-function initApp(){
-  buildNav();
-  navigate('dashboard');
-  buildNotifPanel();
-  renderClock();
-}
-
-function navigate(pageId){
-  document.querySelectorAll('.nav-item[data-nav]').forEach(el=> el.classList.toggle('active', el.dataset.nav===pageId));
-  document.getElementById('shell').classList.remove('mobile-open');
-  const c = document.getElementById('content');
-  c.innerHTML = '<div class="skel" style="height:120px;border-radius:14px;margin-bottom:14px;"></div><div class="skel" style="height:260px;border-radius:14px;"></div>';
-  setTimeout(()=>{
-    if(pageId==='dashboard') renderDashboard();
-    else if(pageId==='directory') renderDirectory();
-    else renderPlaceholder(pageId);
-  }, 260);
-}
-
-function pageHead(title, sub){
-  return `<div class="page-head"><div><div class="crumb">PeoplePulse HRMS</div><h1>${title}</h1><p>${sub}</p></div></div>`;
-}
-
-/* ---------------- Dashboard ---------------- */
-const KPIS = [
-  {label:'Total Employees', val:1248, delta:'+8.2%', up:true, ic:'👥', color:'#2E5EEA'},
-  {label:'Active Employees', val:1189, delta:'+3.1%', up:true, ic:'✅', color:'#12875A'},
-  {label:'New Joiners', val:34, delta:'+12.0%', up:true, ic:'🆕', color:'#7C4DFF'},
-  {label:'On Leave', val:47, delta:'-2.4%', up:false, ic:'🌴', color:'#B25E09'},
-  {label:'Present Today', val:1102, delta:'+1.0%', up:true, ic:'🟢', color:'#12875A'},
-  {label:'Absent Today', val:39, delta:'-0.6%', up:false, ic:'🔴', color:'#C0293C'},
-  {label:'Pending Leave Requests', val:18, delta:'+5', up:false, ic:'📝', color:'#B25E09'},
-  {label:'Open Positions', val:22, delta:'+4', up:true, ic:'💼', color:'#2E5EEA'}
-];
-
-function renderDashboard(){
-  const c = document.getElementById('content');
-  c.innerHTML = pageHead('Dashboard','Welcome back, here\\'s what\\'s happening across PeoplePulse today.') +
-  `<div class="kpi-grid" id="kpi-grid">${KPIS.map((k,i)=>`
-    <div class="card kpi">
-      <div class="kpi-top"><div class="kpi-ic" style="background:${k.color}1A;color:${k.color}">${k.ic}</div>
-      <span class="kpi-delta ${k.up?'up':'down'}">${k.up?'▲':'▼'} ${k.delta}</span></div>
-      <div class="kpi-num" data-target="${k.val}" id="kn-${i}">0</div>
-      <div class="kpi-label">${k.label}</div>
-    </div>`).join('')}</div>
-
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-h"><h3>Employees by Department</h3><span class="sub">Current headcount</span></div>
-      <div class="chart-box"><canvas id="chart-dept"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-h"><h3>Employees by Location</h3><span class="sub">5 offices</span></div>
-      <div class="chart-box"><canvas id="chart-loc"></canvas></div>
-    </div>
-  </div>
-
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-h"><h3>Monthly Joiners &amp; Resignees</h3><span class="sub">Last 6 months</span></div>
-      <div class="chart-box small"><canvas id="chart-jr"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-h"><h3>Attendance Overview</h3><span class="sub">Today</span></div>
-      <div class="chart-box small"><canvas id="chart-att"></canvas></div>
-    </div>
-  </div>
-
-  <div class="grid-2b">
-    <div class="card">
-      <div class="card-h"><h3>Employee Growth</h3><span class="sub">Last 12 months</span></div>
-      <div class="chart-box small"><canvas id="chart-growth"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-h"><h3>Leave Utilization by Type</h3><span class="sub">This year</span></div>
-      <div class="chart-box small"><canvas id="chart-leave"></canvas></div>
-    </div>
-  </div>
-
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-h"><h3>Recent Activities</h3></div>
-      <div class="timeline">
-        ${[['Arun Kumar joined Engineering','2 hours ago'],['Leave approved for Priya Sharma','4 hours ago'],
-           ['Rahul Kumar updated his profile','Yesterday'],['Attendance marked for 1,102 employees','Yesterday'],
-           ['Payroll processed for September','2 days ago'],['Divya S submitted resignation','3 days ago']]
-          .map(t=>`<div class="tl-item"><div class="tl-dot"></div><div class="tl-body"><p>${t[0]}</p><span>${t[1]}</span></div></div>`).join('')}
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-h"><h3>Upcoming Events</h3></div>
-      ${[['24','Oct','Karthik R — Work anniversary'],['02','Nov','Company holiday — Diwali'],
-         ['05','Nov','Meera N — Birthday'],['10','Nov','All-hands meeting']]
-        .map(e=>`<div class="event-item"><div class="event-date"><span>${e[0]}</span>${e[1]}</div><div class="event-txt"><p>${e[2]}</p></div></div>`).join('')}
-    </div>
-  </div>`;
-
-  animateCounters();
-  buildCharts();
-}
-
-function animateCounters(){
-  KPIS.forEach((k,i)=>{
-    const el = document.getElementById('kn-'+i);
-    let start = 0; const dur = 900; const t0 = performance.now();
-    function tick(t){
-      const p = Math.min(1,(t-t0)/dur);
-      el.textContent = Math.round(k.val * (1-Math.pow(1-p,3))).toLocaleString();
-      if(p<1) requestAnimationFrame(tick);
+// Location Pie Chart
+const locCtx = document.getElementById('locationPieChart').getContext('2d');
+new Chart(locCtx, {
+  type: 'pie',
+  data: {
+    labels: ['Detroit', 'Grand Rapids city', 'Warren city'],
+    datasets: [{
+      data: [33.3, 33.3, 33.4],
+      backgroundColor: ['#ff7368', '#b5e77d', '#5ba3fc'],
+      borderWidth: 1,
+      borderColor: '#ffffff'
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.label}: ${ctx.raw}%`
+        }
+      }
     }
-    requestAnimationFrame(tick);
-  });
-}
-
-function chartColors(){
-  const dark = root.getAttribute('data-theme')==='dark' || (root.getAttribute('data-theme')!=='light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  return {grid: dark? 'rgba(255,255,255,.07)':'rgba(16,24,40,.06)', text: dark? '#9AA7C2':'#5C6579'};
-}
-
-function buildCharts(){
-  Object.values(charts).forEach(ch=>ch.destroy && ch.destroy());
-  charts = {};
-  const cc = chartColors();
-  Chart.defaults.font.family = "'Inter',sans-serif";
-  Chart.defaults.color = cc.text;
-
-  charts.dept = new Chart(document.getElementById('chart-dept'), {type:'bar',
-    data:{labels:DEPTS, datasets:[{label:'Employees', data:[412,86,124,198,276,152], backgroundColor:'#2E5EEA', borderRadius:6, maxBarThickness:34}]},
-    options:{plugins:{legend:{display:false}}, scales:{y:{grid:{color:cc.grid}, beginAtZero:true}, x:{grid:{display:false}}}, animation:{duration:800}}});
-
-  charts.loc = new Chart(document.getElementById('chart-loc'), {type:'doughnut',
-    data:{labels:LOCS, datasets:[{data:[412,298,201,187,150], backgroundColor:['#2E5EEA','#7C4DFF','#12875A','#B25E09','#C0293C'], borderWidth:0}]},
-    options:{plugins:{legend:{position:'bottom', labels:{boxWidth:9,padding:12,font:{size:11}}}}, cutout:'62%', animation:{duration:800}}});
-
-  charts.jr = new Chart(document.getElementById('chart-jr'), {type:'bar',
-    data:{labels:['Apr','May','Jun','Jul','Aug','Sep'], datasets:[
-      {label:'Joined', data:[24,31,18,29,34,27], backgroundColor:'#2E5EEA', borderRadius:5, maxBarThickness:16},
-      {label:'Resigned', data:[9,12,7,14,11,8], backgroundColor:'#C0293C', borderRadius:5, maxBarThickness:16}]},
-    options:{plugins:{legend:{position:'bottom', labels:{boxWidth:9,font:{size:11}}}}, scales:{y:{grid:{color:cc.grid}}, x:{grid:{display:false}}}, animation:{duration:800}}});
-
-  charts.att = new Chart(document.getElementById('chart-att'), {type:'doughnut',
-    data:{labels:['Present','Absent','Late','On Leave'], datasets:[{data:[1102,39,24,47], backgroundColor:['#12875A','#C0293C','#B25E09','#2E5EEA'], borderWidth:0}]},
-    options:{plugins:{legend:{position:'bottom', labels:{boxWidth:9,padding:10,font:{size:11}}}}, cutout:'62%', animation:{duration:800}}});
-
-  charts.growth = new Chart(document.getElementById('chart-growth'), {type:'line',
-    data:{labels:['Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'],
-      datasets:[{label:'Headcount', data:[1020,1041,1058,1072,1090,1105,1130,1152,1178,1201,1224,1248], borderColor:'#2E5EEA', backgroundColor:'rgba(46,94,234,.12)', fill:true, tension:.35, pointRadius:0}]},
-    options:{plugins:{legend:{display:false}}, scales:{y:{grid:{color:cc.grid}}, x:{grid:{display:false}}}, animation:{duration:900}}});
-
-  charts.leave = new Chart(document.getElementById('chart-leave'), {type:'bar',
-    data:{labels:['Casual','Sick','Earned','Comp Off','Maternity','Paternity','LOP'], datasets:[{data:[68,54,72,31,12,8,6], backgroundColor:'#7C4DFF', borderRadius:6, maxBarThickness:24}]},
-    options:{indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{grid:{color:cc.grid}}, y:{grid:{display:false}}}, animation:{duration:800}}});
-}
-function refreshChartTheme(){ if(document.getElementById('chart-dept')) buildCharts(); }
-
-/* ---------------- Employee Directory ---------------- */
-let dirState = {q:'', dept:'', status:'', sort:'name', dir:1, page:1, pageSize:8};
-
-function renderDirectory(){
-  const c = document.getElementById('content');
-  c.innerHTML = pageHead('Employee Directory', EMPLOYEES.length+' employees across '+DEPTS.length+' departments') +
-  `<div class="toolbar">
-    <input type="text" id="dir-search" placeholder="Search name, ID or email…" style="min-width:220px;">
-    <select id="dir-dept"><option value="">All departments</option>${DEPTS.map(d=>`<option>${d}</option>`).join('')}</select>
-    <select id="dir-status"><option value="">All statuses</option><option>Active</option><option>On Leave</option><option>Inactive</option></select>
-    <div class="spacer"></div>
-    <button class="btn btn-ghost btn-sm" id="dir-export">⭳ Export CSV</button>
-    <button class="btn btn-primary btn-sm" id="dir-add">+ Add Employee</button>
-  </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr>
-        <th data-k="id">Employee ID</th><th data-k="name">Name</th><th data-k="dept">Department</th>
-        <th data-k="designation">Designation</th><th>Email</th><th>Phone</th><th data-k="location">Location</th>
-        <th data-k="joined">Joining Date</th><th data-k="type">Type</th><th data-k="status">Status</th><th>Actions</th>
-      </tr></thead>
-      <tbody id="dir-body"></tbody>
-    </table>
-    <div class="pagination" id="dir-pagination"></div>
-  </div>`;
-
-  document.getElementById('dir-search').addEventListener('input', e=>{dirState.q=e.target.value.toLowerCase(); dirState.page=1; drawDirectory();});
-  document.getElementById('dir-dept').addEventListener('change', e=>{dirState.dept=e.target.value; dirState.page=1; drawDirectory();});
-  document.getElementById('dir-status').addEventListener('change', e=>{dirState.status=e.target.value; dirState.page=1; drawDirectory();});
-  document.querySelectorAll('th[data-k]').forEach(th=> th.addEventListener('click', ()=>{
-    const k = th.dataset.k;
-    dirState.dir = (dirState.sort===k) ? -dirState.dir : 1;
-    dirState.sort = k; drawDirectory();
-  }));
-  document.getElementById('dir-export').addEventListener('click', ()=> toast('Employee data exported (demo — no file generated).','success'));
-  document.getElementById('dir-add').addEventListener('click', openAddEmployeeModal);
-  drawDirectory();
-}
-
-function drawDirectory(){
-  let rows = EMPLOYEES.filter(e=>{
-    if(dirState.dept && e.dept!==dirState.dept) return false;
-    if(dirState.status && e.status!==dirState.status) return false;
-    if(dirState.q){ const s=(e.name+e.id+e.email).toLowerCase(); if(!s.includes(dirState.q)) return false; }
-    return true;
-  });
-  rows.sort((a,b)=>{
-    const va=a[dirState.sort], vb=b[dirState.sort];
-    return va<vb ? -1*dirState.dir : va>vb ? 1*dirState.dir : 0;
-  });
-  const total = rows.length;
-  const pages = Math.max(1, Math.ceil(total/dirState.pageSize));
-  dirState.page = Math.min(dirState.page, pages);
-  const start = (dirState.page-1)*dirState.pageSize;
-  const pageRows = rows.slice(start, start+dirState.pageSize);
-
-  const body = document.getElementById('dir-body');
-  if(!pageRows.length){
-    body.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:34px;color:var(--text-3);">No employees match these filters.</td></tr>`;
-  } else {
-    body.innerHTML = pageRows.map(e=>`<tr>
-      <td class="mono emp-id">${e.id}</td>
-      <td><div class="emp-cell"><div class="avatar av">${e.name.split(' ').map(x=>x[0]).join('').slice(0,2)}</div><div><div class="emp-name">${e.name}</div></div></div></td>
-      <td>${e.dept}</td><td>${e.designation}</td><td>${e.email}</td><td>${e.phone}</td><td>${e.location}</td>
-      <td>${e.joined}</td><td>${e.type}</td>
-      <td><span class="badge ${e.status==='Active'?'b-green':e.status==='On Leave'?'b-amber':'b-red'}">${e.status}</span></td>
-      <td><div class="row-actions">
-        <button class="act-btn" title="View" onclick="PP.viewEmployee('${e.id}')">👁</button>
-        <button class="act-btn" title="Edit" onclick="PP.editEmployee('${e.id}')">✎</button>
-        <button class="act-btn" title="Deactivate" onclick="PP.deleteEmployee('${e.id}')">🗑</button>
-      </div></td>
-    </tr>`).join('');
   }
-
-  document.getElementById('dir-pagination').innerHTML = `
-    <span>Showing ${total? start+1:0}–${Math.min(start+dirState.pageSize,total)} of ${total}</span>
-    <div class="page-btns">
-      <button ${dirState.page===1?'disabled':''} onclick="PP.dirPage(${dirState.page-1})">‹</button>
-      ${Array.from({length:pages},(_,i)=>`<button class="${dirState.page===i+1?'active':''}" onclick="PP.dirPage(${i+1})">${i+1}</button>`).join('')}
-      <button ${dirState.page===pages?'disabled':''} onclick="PP.dirPage(${dirState.page+1})">›</button>
-    </div>`;
-}
-
-/* ---------------- Placeholder pages ---------------- */
-const LABELS = {}; NAV.forEach(n=>{ LABELS[n.id]=n.label; (n.children||[]).forEach(c=>LABELS[c.id]=c.label); });
-function renderPlaceholder(id){
-  const label = LABELS[id] || id;
-  document.getElementById('content').innerHTML = pageHead(label, 'This module\\'s data model and API are defined below.') +
-  `<div class="placeholder">
-    <div class="ic">🧱</div>
-    <h3>${label} is scaffolded, not fully built in this pass</h3>
-    <p>The sidebar, routing and design system are fully wired up for this section. Ask to expand ${label} and it'll get the same table/board/form treatment as Dashboard and Employee Directory.</p>
-    <div class="chip-row">
-      <span class="chip">Same design tokens</span><span class="chip">Same table/modal components</span><span class="chip">REST endpoints already sketched</span>
-    </div>
-  </div>`;
-}
-
-/* ---------------- Search ---------------- */
-const searchInput = document.getElementById('global-search');
-const searchResults = document.getElementById('search-results');
-searchInput.addEventListener('input', ()=>{
-  const q = searchInput.value.trim().toLowerCase();
-  if(!q){ searchResults.classList.remove('show'); return; }
-  const emps = EMPLOYEES.filter(e=> (e.name+e.id).toLowerCase().includes(q)).slice(0,4);
-  const depts = DEPTS.filter(d=> d.toLowerCase().includes(q));
-  let html = '';
-  if(emps.length) html += `<div class="sr-group">Employees</div>` + emps.map(e=>`<div class="sr-item" onclick="PP.goSearch('directory')"><span>${e.name}</span><span class="mono" style="color:var(--text-3)">${e.id}</span></div>`).join('');
-  if(depts.length) html += `<div class="sr-group">Departments</div>` + depts.map(d=>`<div class="sr-item" onclick="PP.goSearch('org')">${d}</div>`).join('');
-  if(!html) html = `<div class="sr-item" style="color:var(--text-3);">No results for "${q}"</div>`;
-  searchResults.innerHTML = html; searchResults.classList.add('show');
-});
-document.addEventListener('click', e=>{ if(!e.target.closest('.search-wrap')) searchResults.classList.remove('show'); });
-
-/* ---------------- Notifications & dropdowns ---------------- */
-function buildNotifPanel(){
-  const items = ['Leave request submitted by Karthik R','Leave request approved for Meera N','New employee added: Arun Kumar','Interview scheduled with Ananya Rao','Payroll processed for September','Document expiring: Rahul Kumar — Passport'];
-  document.getElementById('notif-panel').innerHTML = `<div style="padding:10px 12px;font-weight:700;font-size:12.5px;border-bottom:1px solid var(--border);">Notifications</div>` +
-    items.map(t=>`<div style="padding:10px 12px;font-size:12.5px;border-bottom:1px solid var(--border);">${t}</div>`).join('');
-}
-function closeDropdowns(){ document.querySelectorAll('.dropdown-panel').forEach(p=>p.classList.remove('show')); }
-document.getElementById('notif-btn').addEventListener('click', e=>{ e.stopPropagation(); const p=document.getElementById('notif-panel'); const wasOpen=p.classList.contains('show'); closeDropdowns(); if(!wasOpen) p.classList.add('show'); });
-document.getElementById('user-btn').addEventListener('click', e=>{ e.stopPropagation(); const p=document.getElementById('user-panel'); const wasOpen=p.classList.contains('show'); closeDropdowns(); if(!wasOpen) p.classList.add('show'); });
-document.addEventListener('click', closeDropdowns);
-document.getElementById('logout-btn').addEventListener('click', ()=>{
-  document.getElementById('app').classList.remove('ready');
-  document.getElementById('login-screen').style.display='flex';
-  toast('Logged out.','info');
 });
 
-/* ---------------- Sidebar collapse / mobile ---------------- */
-document.getElementById('collapse-toggle').addEventListener('click', ()=> document.getElementById('shell').classList.toggle('collapsed'));
-document.getElementById('mobile-toggle').addEventListener('click', ()=> document.getElementById('shell').classList.toggle('mobile-open'));
-
-/* ---------------- Modal helpers ---------------- */
-const overlay = document.getElementById('modal-overlay');
-const box = document.getElementById('modal-box');
-function openModal(html){ box.innerHTML = html; overlay.classList.add('show'); }
-function closeModal(){ overlay.classList.remove('show'); }
-overlay.addEventListener('click', e=>{ if(e.target===overlay) closeModal(); });
-
-function viewEmployee(id){
-  const e = EMPLOYEES.find(x=>x.id===id);
-  openModal(`<div class="modal-head"><h3>${e.name}</h3><button class="icon-btn" onclick="PP.closeModal()">✕</button></div>
-  <div class="modal-body">
-    <div class="form-row">
-      <div><div class="field-hint">Employee ID</div><div class="mono">${e.id}</div></div>
-      <div><div class="field-hint">Status</div><span class="badge ${e.status==='Active'?'b-green':e.status==='On Leave'?'b-amber':'b-red'}">${e.status}</span></div>
-      <div><div class="field-hint">Department</div>${e.dept}</div>
-      <div><div class="field-hint">Designation</div>${e.designation}</div>
-      <div><div class="field-hint">Email</div>${e.email}</div>
-      <div><div class="field-hint">Phone</div>${e.phone}</div>
-      <div><div class="field-hint">Location</div>${e.location}</div>
-      <div><div class="field-hint">Joining Date</div>${e.joined}</div>
-    </div>
-  </div>
-  <div class="modal-foot"><button class="btn btn-ghost" onclick="PP.closeModal()">Close</button></div>`);
-}
-function editEmployee(id){
-  const e = EMPLOYEES.find(x=>x.id===id);
-  openModal(`<div class="modal-head"><h3>Edit ${e.name}</h3><button class="icon-btn" onclick="PP.closeModal()">✕</button></div>
-  <div class="modal-body">
-    <div class="form-row">
-      <div class="field"><label>Full name</label><input value="${e.name}" id="ef-name"></div>
-      <div class="field"><label>Designation</label><input value="${e.designation}" id="ef-desig"></div>
-      <div class="field"><label>Email</label><input value="${e.email}" id="ef-email"></div>
-      <div class="field"><label>Phone</label><input value="${e.phone}" id="ef-phone"></div>
-    </div>
-  </div>
-  <div class="modal-foot"><button class="btn btn-ghost" onclick="PP.closeModal()">Cancel</button><button class="btn btn-primary" onclick="PP.saveEmployee('${id}')">Save changes</button></div>`);
-}
-function saveEmployee(id){
-  const e = EMPLOYEES.find(x=>x.id===id);
-  e.name = document.getElementById('ef-name').value || e.name;
-  e.designation = document.getElementById('ef-desig').value || e.designation;
-  e.email = document.getElementById('ef-email').value || e.email;
-  e.phone = document.getElementById('ef-phone').value || e.phone;
-  closeModal(); drawDirectory(); toast('Employee updated.','success');
-}
-function deleteEmployee(id){
-  const e = EMPLOYEES.find(x=>x.id===id);
-  openModal(`<div class="modal-head"><h3>Deactivate employee?</h3><button class="icon-btn" onclick="PP.closeModal()">✕</button></div>
-  <div class="modal-body"><p style="font-size:13.5px;color:var(--text-2);">This will mark <strong>${e.name} (${e.id})</strong> as Inactive. This action can be reversed from Employee Details.</p></div>
-  <div class="modal-foot"><button class="btn btn-ghost" onclick="PP.closeModal()">Cancel</button><button class="btn btn-danger" onclick="PP.confirmDelete('${id}')">Deactivate</button></div>`);
-}
-function confirmDelete(id){
-  const e = EMPLOYEES.find(x=>x.id===id); e.status='Inactive';
-  closeModal(); drawDirectory(); toast(e.name+' marked as Inactive.','success');
-}
-
-/* Add employee — condensed multi-step wizard (Personal → Employment → Review) */
-let wizStep = 1; let wizData = {};
-function openAddEmployeeModal(){
-  wizStep = 1; wizData = {};
-  openModal(wizardHtml());
-  bindWizard();
-}
-function wizardHtml(){
-  return `<div class="modal-head"><h3>Add Employee</h3><button class="icon-btn" onclick="PP.closeModal()">✕</button></div>
-  <div class="modal-body">
-    <div class="steps-track"><i class="on" data-s="1"></i><i data-s="2"></i><i data-s="3"></i></div>
-    <div class="step-panel active" data-step="1">
-      <div class="form-row">
-        <div class="field"><label>Full name *</label><input id="w-name" placeholder="e.g. Ananya Rao"></div>
-        <div class="field"><label>Employee ID *</label><input id="w-id" placeholder="e.g. EMP029"></div>
-        <div class="field"><label>Email *</label><input id="w-email" placeholder="name@peoplepulse.com"></div>
-        <div class="field"><label>Phone *</label><input id="w-phone" placeholder="+91 9XXXXXXXXX"></div>
-      </div>
-      <div class="err-text" id="w-err1">Please fill all required fields with a valid email.</div>
-    </div>
-    <div class="step-panel" data-step="2">
-      <div class="form-row">
-        <div class="field"><label>Department *</label><select id="w-dept">${DEPTS.map(d=>`<option>${d}</option>`).join('')}</select></div>
-        <div class="field"><label>Designation *</label><input id="w-desig" placeholder="e.g. Software Engineer"></div>
-        <div class="field"><label>Location *</label><select id="w-loc">${LOCS.map(l=>`<option>${l}</option>`).join('')}</select></div>
-        <div class="field"><label>Joining date *</label><input type="date" id="w-date"></div>
-      </div>
-    </div>
-    <div class="step-panel" data-step="3">
-      <p style="font-size:13px;color:var(--text-2);margin-bottom:10px;">Review the details, then submit. Bank and document details are collected in a secure follow-up step (encrypted server-side, never in this demo layer).</p>
-      <div id="w-review" style="font-size:13px;line-height:1.9;"></div>
-    </div>
-  </div>
-  <div class="modal-foot">
-    <button class="btn btn-ghost" id="w-back">Back</button>
-    <button class="btn btn-primary" id="w-next">Next</button>
-  </div>`;
-}
-function bindWizard(){
-  document.getElementById('w-back').addEventListener('click', ()=>{
-    if(wizStep===1){ closeModal(); return; }
-    wizStep--; showWizStep();
-  });
-  document.getElementById('w-next').addEventListener('click', ()=>{
-    if(wizStep===1){
-      const name=document.getElementById('w-name').value.trim(), id=document.getElementById('w-id').value.trim();
-      const email=document.getElementById('w-email').value.trim(), phone=document.getElementById('w-phone').value.trim();
-      const okEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      const dup = EMPLOYEES.some(e=>e.id.toLowerCase()===id.toLowerCase() || e.email.toLowerCase()===email.toLowerCase());
-      const ok = name && id && okEmail && phone && !dup;
-      document.getElementById('w-err1').style.display = ok ? 'none':'block';
-      document.getElementById('w-err1').textContent = dup ? 'That Employee ID or email already exists.' : 'Please fill all required fields with a valid email.';
-      if(!ok) return;
-      wizData.name=name; wizData.id=id; wizData.email=email; wizData.phone=phone;
-      wizStep=2; showWizStep(); return;
+// Monthly Joinees & Resignees Stacked Chart
+const joinCtx = document.getElementById('joineeChart').getContext('2d');
+new Chart(joinCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Nov', 'Dec', 'Jan'],
+    datasets: [
+      {
+        label: 'Resigned',
+        data: [0, 0, 2],
+        backgroundColor: '#ff7b72',
+        barPercentage: 0.4
+      },
+      {
+        label: 'Joined',
+        data: [0, 0, 4],
+        backgroundColor: '#b3e283',
+        barPercentage: 0.4
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 11 } }
+      },
+      y: {
+        min: 0,
+        max: 4,
+        ticks: { stepSize: 1, font: { size: 10 } },
+        title: { display: true, text: 'Employees Count', font: { size: 11 } },
+        grid: { color: '#ebf0f5' }
+      }
+    },
+    plugins: {
+      legend: { display: false }
     }
-    if(wizStep===2){
-      wizData.dept=document.getElementById('w-dept').value; wizData.designation=document.getElementById('w-desig').value||'Not specified';
-      wizData.location=document.getElementById('w-loc').value; wizData.date=document.getElementById('w-date').value || new Date().toISOString().slice(0,10);
-      wizStep=3; showWizStep();
-      document.getElementById('w-review').innerHTML = `<strong>${wizData.name}</strong> · ${wizData.id}<br>${wizData.email} · ${wizData.phone}<br>${wizData.designation}, ${wizData.dept} — ${wizData.location}<br>Joining: ${wizData.date}`;
-      return;
-    }
-    EMPLOYEES.unshift({...wizData, type:'Full-time', status:'Active', joined:wizData.date});
-    closeModal(); dirState.page=1; drawDirectory();
-    toast(wizData.name+' added successfully.','success');
-  });
-  showWizStep();
+  }
+});
+
+function updateDeptChart() {
+  deptBarChart.data.datasets[0].data = [6, 3, 3];
+  deptBarChart.update();
 }
-function showWizStep(){
-  document.querySelectorAll('.step-panel').forEach(p=> p.classList.toggle('active', +p.dataset.step===wizStep));
-  document.querySelectorAll('.steps-track i').forEach(i=> i.classList.toggle('on', +i.dataset.s<=wizStep));
-  document.getElementById('w-next').textContent = wizStep===3 ? 'Submit' : 'Next';
-  document.getElementById('w-back').textContent = wizStep===1 ? 'Cancel' : 'Back';
-}
-
-function renderClock(){}
-
-/* expose small API used by inline handlers */
-window.PP = {
-  viewEmployee, editEmployee, saveEmployee, deleteEmployee, confirmDelete,
-  dirPage:(p)=>{ dirState.page=p; drawDirectory(); },
-  goSearch:(id)=>{ document.getElementById('search-results').classList.remove('show'); searchInput.value=''; navigate(id); },
-  closeModal
-};
-
-})();
 </script>
 </body>
 </html>
