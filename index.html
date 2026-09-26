@@ -2,407 +2,440 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PeopleFlow HRMS — Human Resource Management</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PeoplePulse HRMS — Admin Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
-:root{
-  --primary:#3b82f6;--primary-dark:#2563eb;--primary-soft:#eff6ff;
-  --nav:#252b33;--nav2:#1f252c;--nav-text:#b8c0ca;--nav-active:#fff;
-  --bg:#f5f7fa;--card:#fff;--text:#20252b;--muted:#7b8490;
-  --border:#e4e8ed;--green:#22c55e;--red:#ef4444;--orange:#f59e0b;
-  --purple:#8b5cf6;--shadow:0 2px 10px rgba(30,41,59,.06);
-  --radius:5px;--transition:.2s ease;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow-x:hidden}
-button,input,select,textarea{font:inherit}.hidden{display:none!important}
-
-/* SIDEBAR */
-.sidebar{width:224px;min-width:224px;height:100vh;position:sticky;top:0;background:var(--nav);color:#fff;display:flex;flex-direction:column;z-index:100;transition:var(--transition)}
-.brand{height:68px;padding:0 17px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.07)}
-.brand-mark{width:30px;height:30px;border-radius:5px;background:#e8f2ff;color:var(--primary);display:grid;place-items:center;font-size:15px}
-.brand h1{font-size:12px;font-weight:600;white-space:nowrap}.brand small{display:block;color:#8e98a4;font-size:9px;margin-top:2px}
-.nav-wrap{padding:13px 8px;overflow:auto}.nav-label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#69727e;padding:9px 10px 7px}
-.nav-item{height:38px;padding:0 11px;display:flex;align-items:center;gap:11px;color:var(--nav-text);text-decoration:none;font-size:11px;border-radius:4px;cursor:pointer;margin:2px 0;transition:var(--transition)}
-.nav-item i{width:15px;text-align:center;font-size:11px}.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
-.nav-item.active{background:#3d4651;color:#fff}.nav-item.active i{color:#60a5fa}
-.nav-badge{margin-left:auto;background:#ef4444;color:#fff;border-radius:10px;padding:2px 6px;font-size:8px}
-.sidebar-bottom{margin-top:auto;padding:10px;border-top:1px solid rgba(255,255,255,.07)}
-.profile-mini{display:flex;align-items:center;gap:8px;padding:8px;border-radius:4px}.avatar{width:30px;height:30px;border-radius:50%;background:#4b8ff7;color:#fff;display:grid;place-items:center;font-size:10px;font-weight:700}
-.profile-mini strong{font-size:10px;display:block}.profile-mini span{font-size:8px;color:#8d97a3}
-
-/* MAIN */
-.main{flex:1;min-width:0}.topbar{height:64px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:80}
-.menu-btn{display:none;border:0;background:transparent;font-size:17px;color:#58616d}
-.page-heading{flex:1}.page-heading h2{font-family:"Plus Jakarta Sans";font-size:14px;font-weight:700}.page-heading span{font-size:9px;color:var(--muted);display:block;margin-top:2px}
-.subscription{font-size:9px;color:#4e94ee;border-right:1px solid var(--border);padding-right:14px}
-.top-actions{display:flex;align-items:center;gap:7px}.top-btn{height:32px;width:32px;border:1px solid var(--border);background:#fff;border-radius:4px;color:#6b7280;cursor:pointer}
-.top-btn:hover{color:var(--primary);border-color:#b9d4ff}.top-avatar{width:31px;height:31px;border-radius:50%;background:#3b82f6;color:#fff;display:grid;place-items:center;font-size:10px;font-weight:700}
-.content{padding:18px 20px 28px}.page{display:none}.page.active{display:block;animation:fade .2s ease}
-@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-
-/* DASHBOARD */
-.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
-.kpi{height:72px;background:#fff;border:1px solid var(--border);border-radius:3px;box-shadow:var(--shadow);position:relative;padding:12px 14px 10px 18px;overflow:hidden}
-.kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:#60a5fa}
-.kpi:nth-child(2):before{background:#60a5fa}.kpi:nth-child(3):before{background:#22c55e}.kpi:nth-child(4):before{background:#f59e0b}.kpi:nth-child(5):before{background:#8b5cf6}
-.kpi .num{font-family:"Plus Jakarta Sans";font-size:20px;font-weight:700;color:#4b94ee;line-height:1.1}.kpi .label{font-size:9px;color:#9299a2;margin-top:3px}
-.kpi .icon{position:absolute;right:13px;top:15px;color:#dceafe;font-size:22px}
-.grid-2{display:grid;grid-template-columns:1.5fr 1fr;gap:10px;margin-bottom:10px}
-.grid-equal{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.card{background:#fff;border:1px solid var(--border);border-radius:3px;box-shadow:var(--shadow);padding:13px}
-.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.card-title{font-size:11px;font-weight:700;color:#3e454d}.card-actions{display:flex;gap:5px}
-.btn{border:1px solid var(--border);background:#fff;color:#66707b;border-radius:3px;padding:6px 10px;font-size:9px;cursor:pointer}.btn:hover{border-color:#9fc6ff;color:var(--primary)}
-.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.danger{color:#dc2626}.btn.success{color:#16a34a}
-.chart-wrap{height:205px}.chart-wrap.short{height:175px}
-.location-box{display:grid;grid-template-columns:1fr 1.1fr;gap:10px;align-items:center}.legend{font-size:9px;color:#69727e}.legend-row{display:flex;align-items:center;gap:7px;margin:8px 0}.dot{width:8px;height:8px;border-radius:2px}
-.mini-table{width:100%;border-collapse:collapse;font-size:9px}.mini-table th{text-align:left;color:#8a929b;background:#f7f8fa;font-size:8px;text-transform:uppercase;padding:8px}.mini-table td{padding:8px;border-bottom:1px solid #eef0f3}.mini-table tr:last-child td{border:0}
-
-/* COMMON MODULE */
-.module-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.module-head h3{font-family:"Plus Jakarta Sans";font-size:15px}.module-head p{font-size:9px;color:var(--muted);margin-top:3px}
-.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}.field{height:32px;border:1px solid var(--border);background:#fff;border-radius:4px;padding:0 9px;color:#555f6b;font-size:9px;outline:none}.field:focus{border-color:#93bfff}.search{min-width:210px}
-.table-card{background:#fff;border:1px solid var(--border);border-radius:4px;box-shadow:var(--shadow);overflow:hidden}
-.data-table{width:100%;border-collapse:collapse;font-size:9px}.data-table th{background:#f7f8fa;color:#7a828c;font-size:8px;text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px;border-bottom:1px solid var(--border)}.data-table td{padding:9px 10px;border-bottom:1px solid #eef0f3;color:#424951}.data-table tr:hover td{background:#fbfcfe}.data-table tr:last-child td{border:0}
-.person{display:flex;align-items:center;gap:7px}.person .avatar{width:27px;height:27px;font-size:8px}.person strong{font-size:9px}.person span{display:block;color:#9aa1aa;font-size:8px;margin-top:2px}
-.pill{display:inline-block;padding:3px 7px;border-radius:9px;font-size:7px;font-weight:600}.pill.green{background:#ecfdf3;color:#16a34a}.pill.red{background:#fef2f2;color:#dc2626}.pill.orange{background:#fff7ed;color:#d97706}.pill.blue{background:#eff6ff;color:#2563eb}.pill.purple{background:#f5f3ff;color:#7c3aed}.pill.gray{background:#f3f4f6;color:#6b7280}
-.actions{display:flex;gap:4px}.act{width:26px;height:26px;border:1px solid var(--border);background:#fff;border-radius:3px;cursor:pointer;color:#69737e}.act:hover{color:var(--primary);border-color:#a9caff}
-.pagination{padding:10px;display:flex;justify-content:space-between;align-items:center;color:#8a929b;font-size:8px}.pages{display:flex;gap:3px}.page-btn{width:25px;height:25px;border:1px solid var(--border);background:#fff;border-radius:3px;font-size:8px;cursor:pointer}.page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
-
-/* MODULE CARDS */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}.stat-card{background:#fff;border:1px solid var(--border);padding:14px;border-radius:4px;box-shadow:var(--shadow)}.stat-card i{font-size:15px;color:#5c9bf0}.stat-card strong{font-family:"Plus Jakarta Sans";font-size:18px;display:block;margin-top:7px}.stat-card span{font-size:8px;color:#89919b}
-.split{display:grid;grid-template-columns:1.3fr .7fr;gap:10px}.list{display:flex;flex-direction:column}.list-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eef0f3;font-size:9px}.list-item:last-child{border:0}
-.progress{height:5px;background:#edf0f3;border-radius:5px;overflow:hidden}.progress i{display:block;height:100%;background:#5b9cf1;border-radius:5px}
-
-/* MODAL */
-.overlay{position:fixed;inset:0;background:rgba(20,25,30,.42);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;z-index:500;padding:15px}.overlay.open{display:flex}.modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,.2);padding:18px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.modal-head h3{font-size:14px}.close{border:0;background:#f3f4f6;width:28px;height:28px;border-radius:4px;cursor:pointer}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.form-group label{display:block;font-size:8px;font-weight:600;color:#626b75;margin-bottom:5px}.form-control{width:100%;height:32px;border:1px solid var(--border);border-radius:4px;padding:0 9px;font-size:9px;outline:none}.form-control:focus{border-color:#8dbbfa}.modal-footer{display:flex;justify-content:flex-end;gap:7px;margin-top:16px;padding-top:12px;border-top:1px solid var(--border)}
-
-/* TOAST */
-.toast{position:fixed;right:18px;bottom:18px;background:#20252b;color:#fff;padding:10px 14px;border-radius:4px;font-size:9px;box-shadow:0 8px 25px rgba(0,0,0,.18);z-index:900;display:none}.toast.show{display:block;animation:toast .2s ease}@keyframes toast{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
-
-/* RESPONSIVE */
-@media(max-width:1050px){.sidebar{width:205px;min-width:205px}.kpis{grid-template-columns:repeat(3,1fr)}.grid-2,.split{grid-template-columns:1fr}.grid-equal{grid-template-columns:1fr}}
-@media(max-width:760px){.sidebar{position:fixed;left:-225px;width:225px;min-width:225px}.sidebar.open{left:0}.menu-btn{display:block}.kpis{grid-template-columns:repeat(2,1fr)}.content{padding:12px}.topbar{padding:0 12px}.subscription{display:none}.data-table{min-width:760px}.table-card{overflow:auto}.form-grid{grid-template-columns:1fr}}
-@media(max-width:430px){.kpis,.stats{grid-template-columns:1fr}.top-actions .top-btn:nth-child(1),.top-actions .top-btn:nth-child(2){display:none}}
+:root{--blue:#4f9cf9;--blue2:#2f80ed;--navy:#1e2732;--navy2:#26313d;--bg:#f4f6f8;--card:#fff;--text:#202a34;--muted:#7d8793;--line:#e6eaf0;--green:#2dbf75;--red:#ed6a6a;--orange:#f2ad42;--purple:#8c72e8;--cyan:#45b9d8;--shadow:0 4px 18px rgba(35,52,70,.07);--r:8px}
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.app{display:flex;min-height:100vh}
+.sidebar{width:246px;background:linear-gradient(180deg,#242f3b,#1d2732);color:#dbe3eb;position:fixed;left:0;top:0;bottom:0;z-index:50;transition:.28s ease;display:flex;flex-direction:column;overflow:auto}.brand{height:66px;padding:0 17px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08)}.brand-mark{width:34px;height:34px;border-radius:7px;background:linear-gradient(135deg,#61a8ff,#327fe6);display:grid;place-items:center;color:#fff;box-shadow:0 7px 18px rgba(47,128,237,.3)}.brand strong{font-family:"Plus Jakarta Sans";font-size:13px;color:#fff}.brand small{display:block;font-size:9px;color:#93a2b2;margin-top:2px}.nav-label{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:#778493;font-weight:800;padding:18px 17px 7px}.nav-item{margin:2px 9px;padding:10px 11px;display:flex;align-items:center;gap:11px;border-radius:6px;color:#b9c4cf;text-decoration:none;font-size:12px;transition:.2s;position:relative}.nav-item i{width:17px;text-align:center;color:#8f9ba8}.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}.nav-item.active{background:#4d9af4;color:#fff;box-shadow:0 5px 14px rgba(61,145,239,.22)}.nav-item.active i{color:#fff}.nav-badge{margin-left:auto;font-size:9px;padding:2px 6px;border-radius:10px;background:#ed6a6a;color:#fff}.side-bottom{margin-top:auto;padding:12px;border-top:1px solid rgba(255,255,255,.07)}.mini-profile{display:flex;align-items:center;gap:9px;padding:9px;border-radius:7px;background:rgba(255,255,255,.05)}.avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff;background:linear-gradient(135deg,#6eaffd,#4b75d8)}.mini-profile strong{font-size:11px;color:#fff;display:block}.mini-profile span{font-size:9px;color:#8492a0}
+.main{margin-left:246px;min-width:0;width:calc(100% - 246px)}.topbar{height:66px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 18px;gap:16px;position:sticky;top:0;z-index:40}.menu-btn{display:none;border:0;background:transparent;font-size:18px;color:var(--text)}.page-heading{flex:1}.page-heading h1{font-family:"Plus Jakarta Sans";font-size:16px}.page-heading p{font-size:10px;color:var(--muted);margin-top:3px}.search{height:35px;width:245px;border:1px solid var(--line);border-radius:5px;background:#fafbfc;display:flex;align-items:center;gap:8px;padding:0 10px;color:#a1aab4}.search input{border:0;outline:0;background:transparent;width:100%;font-size:11px}.top-actions{display:flex;gap:7px;align-items:center}.top-btn{width:33px;height:33px;border:1px solid var(--line);background:#fff;border-radius:5px;color:#65717d;position:relative}.top-btn:hover{border-color:#a9cff8;color:var(--blue2);transform:translateY(-1px)}.dot{position:absolute;right:5px;top:5px;width:6px;height:6px;border-radius:50%;background:#f25c5c;border:1px solid #fff}.subscription{font-size:10px;color:#5b92d7;border:1px solid #d9e8fb;background:#f4f9ff;border-radius:5px;padding:8px 10px}.top-avatar{width:31px;height:31px;border-radius:50%;background:#eaf2fc;color:#347bc8;display:grid;place-items:center;font-size:10px;font-weight:800}
+.content{padding:16px 18px 28px}.page{display:none;animation:pageIn .3s ease}.page.active{display:block}@keyframes pageIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:13px}.kpi{background:#fff;border:1px solid var(--line);border-radius:6px;padding:13px 15px;position:relative;overflow:hidden;box-shadow:var(--shadow);min-height:91px;transition:.22s}.kpi:hover{transform:translateY(-2px);box-shadow:0 9px 24px rgba(35,52,70,.1)}.kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue)}.kpi:nth-child(2):before{background:#67b4f7}.kpi:nth-child(3):before{background:#62c889}.kpi:nth-child(4):before{background:#8f7ae5}.kpi:nth-child(5):before{background:#f2ad42}.kpi .num{font-family:"Plus Jakarta Sans";font-size:25px;font-weight:800;line-height:1.1}.kpi .label{font-size:10px;color:#8a949e;margin-top:7px}.kpi .trend{font-size:9px;color:#32a969;margin-top:5px}.kpi .ico{position:absolute;right:13px;top:14px;font-size:17px;color:#d4e5f8}.grid-main{display:grid;grid-template-columns:2fr 1fr;gap:10px}.card{background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow);padding:12px;margin-bottom:10px}.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.card-title{font-family:"Plus Jakarta Sans";font-size:12px;font-weight:800}.card-sub{font-size:9px;color:var(--muted);margin-top:2px}.card-tools{display:flex;gap:5px}.tool{font-size:9px;border:1px solid var(--line);background:#fff;color:#69747e;border-radius:4px;padding:5px 8px}.tool:hover{border-color:#9cc8f5;color:#327bc7}.chart{height:190px;position:relative}.chart.small{height:190px}.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}.lower{display:grid;grid-template-columns:1.2fr .8fr;gap:10px}.list-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid #eef1f4}.list-row:last-child{border-bottom:0}.person-name{font-size:10px;font-weight:700}.person-meta{font-size:9px;color:var(--muted);margin-top:2px}.grow{flex:1}.status{font-size:8px;font-weight:700;border-radius:12px;padding:4px 7px}.s-green{background:#eaf8f0;color:#229c5c}.s-blue{background:#eaf3ff;color:#347ec8}.s-orange{background:#fff5e5;color:#c8861d}.s-red{background:#fff0f0;color:#d45c5c}.s-purple{background:#f2effd;color:#765fca}.timeline{position:relative;padding-left:20px}.timeline:before{content:"";position:absolute;left:5px;top:7px;bottom:7px;width:1px;background:#dfe6ee}.event{position:relative;padding:7px 0 7px 7px;font-size:10px}.event:before{content:"";position:absolute;left:-18px;top:12px;width:7px;height:7px;border-radius:50%;background:#55a1ee;border:2px solid #e8f3ff}.event span{display:block;color:var(--muted);font-size:8px;margin-top:2px}
+.module-head{display:flex;justify-content:space-between;align-items:center;margin:2px 0 13px}.module-head h2{font-family:"Plus Jakarta Sans";font-size:16px}.module-head p{font-size:10px;color:var(--muted);margin-top:3px}.btn{border:1px solid var(--line);background:#fff;color:#5f6b76;border-radius:5px;padding:8px 11px;font-size:10px;font-weight:700;transition:.2s}.btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.06)}.btn.primary{background:#4b98ed;color:#fff;border-color:#4b98ed}.btn.danger{background:#ed6a6a;color:#fff;border-color:#ed6a6a}.btn.success{background:#2dbf75;color:#fff;border-color:#2dbf75}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}.stat{background:#fff;border:1px solid var(--line);border-radius:6px;padding:13px;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px}.stat i{width:35px;height:35px;border-radius:7px;display:grid;place-items:center;background:#edf5ff;color:#4b98ed}.stat strong{font-family:"Plus Jakarta Sans";font-size:18px;display:block}.stat span{font-size:9px;color:var(--muted)}
+.table-card{background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:var(--shadow);overflow:hidden}.toolbar{padding:10px;border-bottom:1px solid var(--line);display:flex;gap:7px;flex-wrap:wrap}.field{height:32px;border:1px solid var(--line);border-radius:4px;background:#fbfcfd;padding:0 9px;outline:0;font-size:10px;color:#52606d}.field:focus{border-color:#91bfe9;background:#fff}.field.search{width:240px}.table-scroll{overflow:auto}.data-table{width:100%;border-collapse:collapse;font-size:10px;min-width:850px}.data-table th{text-align:left;padding:9px 11px;background:#f8fafc;color:#87919b;font-size:8px;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--line)}.data-table td{padding:10px 11px;border-bottom:1px solid #eef1f4;color:#38434d}.data-table tr:hover td{background:#fbfdff}.person{display:flex;align-items:center;gap:8px}.person .avatar{width:27px;height:27px;font-size:8px}.person small{display:block;color:var(--muted);margin-top:2px}.actions{white-space:nowrap}.act{width:27px;height:27px;border:1px solid var(--line);background:#fff;border-radius:4px;color:#71808e;margin-right:3px}.act:hover{color:#347ec8;border-color:#a9cff1}.pill{display:inline-flex;padding:4px 7px;border-radius:12px;font-size:8px;font-weight:700}.pill.blue{background:#eaf3ff;color:#357ec9}.pill.green{background:#eaf8f0;color:#239a5b}.pill.orange{background:#fff5e5;color:#bd7e17}.pill.red{background:#fff0f0;color:#cf5d5d}.pill.gray{background:#f0f2f4;color:#727d87}.pager{padding:10px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:9px}.page-btns{display:flex;gap:4px}.page-btns button{width:27px;height:27px;border:1px solid var(--line);background:#fff;border-radius:4px;font-size:9px}.page-btns button.active{background:#4b98ed;color:#fff;border-color:#4b98ed}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.form-group{display:flex;flex-direction:column;gap:5px}.form-group.full{grid-column:1/-1}.form-group label{font-size:9px;font-weight:700;color:#687581}.form-control{width:100%;height:34px;border:1px solid var(--line);border-radius:5px;background:#fbfcfd;padding:0 9px;outline:0;font-size:10px;color:#36414b}.form-control:focus{border-color:#8ebdea;background:#fff;box-shadow:0 0 0 3px rgba(79,156,249,.08)}textarea.form-control{height:75px;padding:9px;resize:vertical}.form-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.profile-grid{display:grid;grid-template-columns:270px 1fr;gap:10px}.profile-card{text-align:center}.profile-big{width:82px;height:82px;border-radius:50%;display:grid;place-items:center;margin:8px auto 10px;background:linear-gradient(135deg,#6eaef9,#4777cf);color:#fff;font-size:23px;font-weight:800}.profile-card h3{font-size:13px}.profile-card p{font-size:9px;color:var(--muted);margin-top:3px}.profile-stat{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:9px}.profile-stat:last-child{border:0}.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:12px}.tab{padding:8px 10px;border:0;background:transparent;font-size:9px;color:var(--muted);border-bottom:2px solid transparent}.tab.active{color:#347ec8;border-color:#347ec8;font-weight:700}
+.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;overflow:auto}.kan-col{background:#f7f9fb;border:1px solid var(--line);border-radius:6px;padding:7px;min-height:240px}.kan-head{display:flex;justify-content:space-between;font-size:9px;font-weight:800;margin-bottom:7px}.candidate{background:#fff;border:1px solid var(--line);border-radius:5px;padding:8px;margin-bottom:6px;cursor:grab;box-shadow:0 2px 5px rgba(0,0,0,.03);transition:.2s}.candidate:hover{transform:translateY(-2px);box-shadow:0 6px 13px rgba(0,0,0,.06)}.candidate strong{font-size:9px}.candidate span{font-size:8px;color:var(--muted);display:block;margin-top:3px}
+.empty{padding:35px;text-align:center;color:var(--muted);font-size:10px}.empty i{font-size:25px;color:#cbd4dd;margin-bottom:8px}
+.overlay{position:fixed;inset:0;background:rgba(21,31,42,.48);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:18px;z-index:100}.overlay.open{display:flex}.modal{width:min(610px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:9px;box-shadow:0 24px 70px rgba(0,0,0,.22);animation:modalIn .25s ease}.modal-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.modal-head h3{font-family:"Plus Jakarta Sans";font-size:13px}.close{border:0;background:#f3f5f7;width:28px;height:28px;border-radius:5px;color:#74808c}.modal-body{padding:16px}.modal-foot{display:flex;justify-content:flex-end;gap:7px;padding:12px 16px;border-top:1px solid var(--line)}@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.toast{position:fixed;right:18px;bottom:18px;z-index:200;background:#26313d;color:#fff;border-radius:6px;padding:11px 14px;box-shadow:0 12px 30px rgba(0,0,0,.18);font-size:10px;display:flex;gap:8px;align-items:center;animation:toastIn .25s ease}.toast.success{background:#20965a}.toast.error{background:#d65e5e}.toast.info{background:#347fc8}@keyframes toastIn{from{opacity:0;transform:translateX(15px)}to{opacity:1;transform:none}}
+.loading{position:relative;overflow:hidden;background:#edf1f4;color:transparent!important;border-radius:4px}.loading:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.65),transparent);transform:translateX(-100%);animation:shimmer 1.1s infinite}@keyframes shimmer{to{transform:translateX(100%)}}
+.theme-dark{--bg:#11171d;--card:#1b242d;--text:#eef3f7;--muted:#94a0ac;--line:#2a3540}.theme-dark .topbar,.theme-dark .search,.theme-dark .tool,.theme-dark .btn,.theme-dark .top-btn,.theme-dark .field,.theme-dark .table-card,.theme-dark .card,.theme-dark .kpi,.theme-dark .stat,.theme-dark .modal,.theme-dark .candidate,.theme-dark .kan-col{background:#1b242d;color:var(--text);border-color:#2c3844}.theme-dark .data-table th{background:#202a34}.theme-dark .data-table td{color:#dbe2e8}.theme-dark .form-control{background:#202a34;color:#eef3f7;border-color:#34404c}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(3,1fr)}.grid-main,.lower{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.sidebar{left:-246px}.sidebar.open{left:0}.main{margin-left:0;width:100%}.menu-btn{display:block}.search{display:none}.kpis{grid-template-columns:repeat(2,1fr)}.split,.profile-grid{grid-template-columns:1fr}.topbar{padding:0 12px}.subscription{display:none}}
+@media(max-width:520px){.content{padding:12px 10px}.kpis,.stats{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}.top-actions .top-btn:nth-child(2),.top-actions .top-btn:nth-child(3){display:none}.module-head{align-items:flex-start;gap:10px}.kanban{grid-template-columns:repeat(5,210px)}}
 </style>
 </head>
 <body>
-
+<div class="app">
 <aside class="sidebar" id="sidebar">
-  <div class="brand">
-    <div class="brand-mark"><i class="fa-solid fa-users-gear"></i></div>
-    <div><h1>Human Resource Management</h1><small>PeopleFlow HRMS</small></div>
-  </div>
-  <div class="nav-wrap">
-    <div class="nav-label">Main Menu</div>
-    <a class="nav-item active" onclick="showPage('dashboard',this)"><i class="fa-solid fa-gauge-high"></i>Admin Dashboard</a>
-    <a class="nav-item" onclick="showPage('profile',this)"><i class="fa-regular fa-id-card"></i>Profile</a>
-    <a class="nav-item" onclick="showPage('requirements',this)"><i class="fa-solid fa-clipboard-list"></i>Requirement Raising</a>
-    <a class="nav-item" onclick="showPage('recruitment',this)"><i class="fa-solid fa-user-plus"></i>Recruitment</a>
-    <a class="nav-item" onclick="showPage('employees',this)"><i class="fa-solid fa-users"></i>Employee</a>
-    <a class="nav-item" onclick="showPage('attendance',this)"><i class="fa-regular fa-calendar-check"></i>Attendance</a>
-    <a class="nav-item" onclick="showPage('leave',this)"><i class="fa-solid fa-person-walking-arrow-right"></i>Leave Tracker</a>
-    <a class="nav-item" onclick="showPage('time',this)"><i class="fa-regular fa-clock"></i>Time Tracker</a>
-    <a class="nav-item" onclick="showPage('appraisal',this)"><i class="fa-solid fa-star-half-stroke"></i>Appraisal</a>
-    <a class="nav-item" onclick="showPage('announcement',this)"><i class="fa-solid fa-bullhorn"></i>Announcement <span class="nav-badge">3</span></a>
-    <a class="nav-item" onclick="showPage('resignation',this)"><i class="fa-solid fa-right-from-bracket"></i>Resignation</a>
-    <div class="nav-label">System</div>
-    <a class="nav-item" onclick="showPage('settings',this)"><i class="fa-solid fa-gear"></i>Settings</a>
-  </div>
-  <div class="sidebar-bottom">
-    <div class="profile-mini">
-      <div class="avatar">AP</div><div><strong>Admin Principal</strong><span>Super Admin</span></div>
-    </div>
-  </div>
+  <div class="brand"><div class="brand-mark"><i class="fa-solid fa-people-group"></i></div><div><strong>PeoplePulse HRMS</strong><small>Human Resource Management</small></div></div>
+  <div class="nav-label">Main</div>
+  <a class="nav-item active" onclick="showPage('dashboard',this)"><i class="fa-solid fa-table-columns"></i>Admin Dashboard</a>
+  <a class="nav-item" onclick="showPage('profile',this)"><i class="fa-regular fa-id-card"></i>Profile</a>
+  <a class="nav-item" onclick="showPage('requirements',this)"><i class="fa-solid fa-clipboard-list"></i>Requirement Raising</a>
+  <a class="nav-item" onclick="showPage('recruitment',this)"><i class="fa-solid fa-user-plus"></i>Recruitment</a>
+  <a class="nav-item" onclick="showPage('employees',this)"><i class="fa-solid fa-users"></i>Employee</a>
+  <a class="nav-item" onclick="showPage('attendance',this)"><i class="fa-regular fa-calendar-check"></i>Attendance <span class="nav-badge">Today</span></a>
+  <a class="nav-item" onclick="showPage('leave',this)"><i class="fa-solid fa-person-walking-arrow-right"></i>Leave Tracker</a>
+  <a class="nav-item" onclick="showPage('time',this)"><i class="fa-regular fa-clock"></i>Time Tracker</a>
+  <a class="nav-item" onclick="showPage('appraisal',this)"><i class="fa-solid fa-star-half-stroke"></i>Appraisal</a>
+  <a class="nav-item" onclick="showPage('announcement',this)"><i class="fa-solid fa-bullhorn"></i>Announcement <span class="nav-badge">3</span></a>
+  <a class="nav-item" onclick="showPage('resignation',this)"><i class="fa-solid fa-right-from-bracket"></i>Resignation</a>
+  <div class="nav-label">System</div>
+  <a class="nav-item" onclick="showPage('settings',this)"><i class="fa-solid fa-gear"></i>Settings</a>
+  <div class="side-bottom"><div class="mini-profile"><div class="avatar">AP</div><div><strong>Admin Principal</strong><span>Super Admin</span></div></div></div>
 </aside>
 
 <main class="main">
 <header class="topbar">
   <button class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-  <div class="page-heading"><h2 id="pageTitle">Admin Dashboard</h2><span id="pageSub">Overview of Human Resource Management</span></div>
+  <div class="page-heading"><h1 id="pageTitle">Admin Dashboard</h1><p id="pageSub">Overview of Human Resource Management</p></div>
+  <div class="search"><i class="fa-solid fa-magnifying-glass"></i><input id="globalSearch" placeholder="Search employees, applicants..."></div>
   <div class="subscription"><i class="fa-regular fa-credit-card"></i> Subscription</div>
-  <div class="top-actions">
-    <button class="top-btn" title="Edit application" onclick="toast('Application settings opened')"><i class="fa-solid fa-pen"></i></button>
-    <button class="top-btn" title="Notifications" onclick="toast('No new notifications')"><i class="fa-regular fa-bell"></i></button>
-    <button class="top-btn" title="Help" onclick="toast('Help center opened')"><i class="fa-regular fa-circle-question"></i></button>
-    <div class="top-avatar">AP</div>
-  </div>
+  <div class="top-actions"><button class="top-btn" onclick="toggleTheme()" title="Theme"><i class="fa-solid fa-moon"></i></button><button class="top-btn" onclick="toast('No new notifications','info')" title="Notifications"><i class="fa-regular fa-bell"></i><span class="dot"></span></button><button class="top-btn" onclick="toast('Help center opened','info')" title="Help"><i class="fa-regular fa-circle-question"></i></button><div class="top-avatar">AP</div></div>
 </header>
 
 <section class="content">
-
 <!-- DASHBOARD -->
 <div class="page active" id="page-dashboard">
   <div class="kpis">
-    <div class="kpi"><div class="num">95</div><div class="label">Requirements</div><i class="fa-solid fa-clipboard-list icon"></i></div>
-    <div class="kpi"><div class="num">6</div><div class="label">Applicants</div><i class="fa-solid fa-user-plus icon"></i></div>
-    <div class="kpi"><div class="num">3</div><div class="label">Selected</div><i class="fa-solid fa-user-check icon"></i></div>
-    <div class="kpi"><div class="num">3</div><div class="label">On Boarding</div><i class="fa-solid fa-person-circle-check icon"></i></div>
-    <div class="kpi"><div class="num">12</div><div class="label">Employees</div><i class="fa-solid fa-users icon"></i></div>
+    <div class="kpi"><div class="num" data-count="95">0</div><div class="label">Requirements</div><div class="trend">↑ 6.4% this month</div><i class="fa-solid fa-clipboard-list ico"></i></div>
+    <div class="kpi"><div class="num" data-count="6">0</div><div class="label">Applicants</div><div class="trend">↑ 12.0% this month</div><i class="fa-solid fa-user-plus ico"></i></div>
+    <div class="kpi"><div class="num" data-count="3">0</div><div class="label">Selected</div><div class="trend">↑ 5.2% this month</div><i class="fa-solid fa-user-check ico"></i></div>
+    <div class="kpi"><div class="num" data-count="3">0</div><div class="label">On Boarding</div><div class="trend">2 joining this week</div><i class="fa-solid fa-person-circle-check ico"></i></div>
+    <div class="kpi"><div class="num" data-count="12">0</div><div class="label">Employees</div><div class="trend">↑ 8.3% YTD</div><i class="fa-solid fa-users ico"></i></div>
   </div>
-
-  <div class="grid-2">
-    <div class="card">
-      <div class="card-head"><div class="card-title">Employees By Department</div><div class="card-actions"><button class="btn" onclick="refreshChart(deptChart)">Refresh</button><button class="btn" onclick="sortChart(deptChart)">Sort</button></div></div>
-      <div class="chart-wrap"><canvas id="deptChart"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-head"><div class="card-title">Employees By Location</div><div class="card-actions"><button class="btn" onclick="refreshChart(locationChart)">Refresh</button><button class="btn" onclick="toast('Location chart options opened')">Sort</button></div></div>
-      <div class="location-box"><div class="chart-wrap short"><canvas id="locationChart"></canvas></div>
-        <div class="legend">
-          <div class="legend-row"><span class="dot" style="background:#ef6b6b"></span>Detroit</div>
-          <div class="legend-row"><span class="dot" style="background:#b6dc88"></span>Grand Rapids city</div>
-          <div class="legend-row"><span class="dot" style="background:#5d9bea"></span>Warren city</div>
-        </div>
-      </div>
-    </div>
+  <div class="grid-main">
+    <div class="card"><div class="card-head"><div><div class="card-title">Employees By Department</div><div class="card-sub">Current workforce distribution</div></div><div class="card-tools"><button class="tool" onclick="resetChart('deptChart')"><i class="fa-solid fa-rotate"></i></button><button class="tool" onclick="sortDepartmentChart()"><i class="fa-solid fa-arrow-down-wide-short"></i> Sort</button></div></div><div class="chart"><canvas id="deptChart"></canvas></div></div>
+    <div class="card"><div class="card-head"><div><div class="card-title">Employees By Location</div><div class="card-sub">Workforce location mix</div></div><button class="tool" onclick="resetChart('locationChart')">Refresh</button></div><div class="chart small"><canvas id="locationChart"></canvas></div></div>
   </div>
-
-  <div class="card" style="margin-bottom:10px">
-    <div class="card-head"><div class="card-title">Monthly Joinees and Resignees</div><div class="card-actions"><button class="btn" onclick="refreshChart(joinChart)">Refresh</button><button class="btn" onclick="toast('Chart exported')"><i class="fa-solid fa-download"></i></button></div></div>
-    <div class="chart-wrap"><canvas id="joinChart"></canvas></div>
+  <div class="card"><div class="card-head"><div><div class="card-title">Monthly Joiners & Resignees</div><div class="card-sub">Last 6 months</div></div><button class="tool" onclick="resetChart('movementChart')">Refresh</button></div><div class="chart"><canvas id="movementChart"></canvas></div></div>
+  <div class="lower">
+    <div class="card"><div class="card-head"><div><div class="card-title">Recent Activities</div><div class="card-sub">Latest HR events</div></div><button class="tool" onclick="showPage('announcement',document.querySelectorAll('.nav-item')[9])">View all</button></div><div class="timeline" id="activityTimeline"></div></div>
+    <div class="card"><div class="card-head"><div><div class="card-title">Upcoming Events</div><div class="card-sub">Next 30 days</div></div><button class="tool" onclick="toast('Calendar opened','info')">Calendar</button></div><div id="eventsList"></div></div>
   </div>
-
-  <div class="grid-equal">
-    <div class="card"><div class="card-head"><div class="card-title">Recruitment Pipeline</div><button class="btn" onclick="showPage('recruitment',document.querySelectorAll('.nav-item')[3])">View All</button></div><div id="pipelineList"></div></div>
-    <div class="card"><div class="card-head"><div class="card-title">Recent Employees</div><button class="btn primary" onclick="showPage('employees',document.querySelectorAll('.nav-item')[4])">View Employees</button></div><div id="recentEmployees"></div></div>
+  <div class="split">
+    <div class="card"><div class="card-head"><div><div class="card-title">Recruitment Pipeline</div><div class="card-sub">Applicants by current stage</div></div><button class="tool" onclick="showPage('recruitment',document.querySelectorAll('.nav-item')[3])">View all</button></div><div id="pipelineList"></div></div>
+    <div class="card"><div class="card-head"><div><div class="card-title">Recent Employees</div><div class="card-sub">Latest additions</div></div><button class="tool" onclick="showPage('employees',document.querySelectorAll('.nav-item')[4])">Employees</button></div><div id="recentEmployees"></div></div>
   </div>
 </div>
 
 <!-- PROFILE -->
 <div class="page" id="page-profile">
-  <div class="module-head"><div><h3>My Profile</h3><p>Manage your HRMS profile information</p></div><button class="btn primary" onclick="toast('Profile saved successfully')"><i class="fa-solid fa-save"></i> Save Changes</button></div>
-  <div class="grid-equal">
-    <div class="card"><div class="card-head"><div class="card-title">Personal Information</div></div><div class="form-grid">
-      <div class="form-group"><label>First Name</label><input class="form-control" value="Admin"></div><div class="form-group"><label>Last Name</label><input class="form-control" value="Principal"></div>
-      <div class="form-group"><label>Email</label><input class="form-control" value="admin@company.com"></div><div class="form-group"><label>Phone</label><input class="form-control" value="+91 98765 43210"></div>
-      <div class="form-group"><label>Department</label><input class="form-control" value="Human Resources"></div><div class="form-group"><label>Role</label><input class="form-control" value="Super Admin"></div>
-    </div></div>
-    <div class="card"><div class="card-head"><div class="card-title">Account Overview</div></div><div class="list">
-      <div class="list-item"><span>Employee ID</span><strong>EMP-0001</strong></div><div class="list-item"><span>Joining Date</span><strong>08 Jan 2024</strong></div><div class="list-item"><span>Location</span><strong>Chennai</strong></div><div class="list-item"><span>Last Login</span><strong>Today, 09:42 AM</strong></div>
-    </div></div>
+  <div class="module-head"><div><h2>Profile</h2><p>Manage your employee profile and account details</p></div><button class="btn primary" onclick="toast('Profile saved successfully','success')"><i class="fa-solid fa-save"></i> Save Changes</button></div>
+  <div class="profile-grid">
+    <div class="card profile-card"><div class="profile-big">AP</div><h3>Admin Principal</h3><p>Super Admin · Human Resources</p><div style="margin-top:15px;text-align:left"><div class="profile-stat"><span>Employee ID</span><b>EMP-0001</b></div><div class="profile-stat"><span>Location</span><b>Chennai</b></div><div class="profile-stat"><span>Joining Date</span><b>08 Jan 2024</b></div><div class="profile-stat"><span>Status</span><span class="pill green">Active</span></div></div></div>
+    <div class="card"><div class="tabs"><button class="tab active">Personal</button><button class="tab">Contact</button><button class="tab">Employment</button><button class="tab">Documents</button></div><div class="form-grid"><div class="form-group"><label>First Name</label><input class="form-control" value="Admin"></div><div class="form-group"><label>Last Name</label><input class="form-control" value="Principal"></div><div class="form-group"><label>Email</label><input class="form-control" value="admin@company.com"></div><div class="form-group"><label>Phone</label><input class="form-control" value="+91 98765 43210"></div><div class="form-group"><label>Department</label><input class="form-control" value="Human Resources"></div><div class="form-group"><label>Designation</label><input class="form-control" value="HR Administrator"></div><div class="form-group full"><label>Address</label><textarea class="form-control">Chennai, Tamil Nadu</textarea></div></div></div>
   </div>
 </div>
 
 <!-- REQUIREMENTS -->
 <div class="page" id="page-requirements">
-  <div class="module-head"><div><h3>Requirement Raising</h3><p>Create and manage manpower requirements</p></div><button class="btn primary" onclick="openModal('requirementModal')"><i class="fa-solid fa-plus"></i> Raise Requirement</button></div>
-  <div class="stats"><div class="stat-card"><i class="fa-solid fa-list-check"></i><strong>95</strong><span>Total Requirements</span></div><div class="stat-card"><i class="fa-regular fa-hourglass-half"></i><strong>18</strong><span>Open</span></div><div class="stat-card"><i class="fa-solid fa-circle-check"></i><strong>63</strong><span>Closed</span></div><div class="stat-card"><i class="fa-solid fa-ban"></i><strong>14</strong><span>On Hold</span></div></div>
-  <div class="table-card"><div class="toolbar"><input class="field search" placeholder="Search requirement..." oninput="filterTable('reqTable',this.value)"><select class="field"><option>All Departments</option><option>App Deck</option><option>HR Team</option><option>Support</option></select><select class="field"><option>All Status</option><option>Open</option><option>Closed</option></select></div>
-  <table class="data-table" id="reqTable"><thead><tr><th>Req. ID</th><th>Position</th><th>Department</th><th>Location</th><th>Openings</th><th>Created</th><th>Status</th><th>Actions</th></tr></thead><tbody>
-  <tr><td>REQ-0095</td><td>Full Stack Developer</td><td>App Deck</td><td>Detroit</td><td>2</td><td>24 Sep 2026</td><td><span class="pill blue">Open</span></td><td class="actions"><button class="act" onclick="toast('Requirement opened')"><i class="fa-regular fa-eye"></i></button></td></tr>
-  <tr><td>REQ-0094</td><td>HR Executive</td><td>HR Team</td><td>Warren city</td><td>1</td><td>22 Sep 2026</td><td><span class="pill orange">On Hold</span></td><td class="actions"><button class="act"><i class="fa-regular fa-eye"></i></button></td></tr>
-  <tr><td>REQ-0093</td><td>Support Engineer</td><td>Support</td><td>Grand Rapids city</td><td>3</td><td>20 Sep 2026</td><td><span class="pill green">Closed</span></td><td class="actions"><button class="act"><i class="fa-regular fa-eye"></i></button></td></tr>
-  </tbody></table></div>
+  <div class="module-head"><div><h2>Requirement Raising</h2><p>Create and manage manpower requirements</p></div><button class="btn primary" onclick="openModal('requirementModal')"><i class="fa-solid fa-plus"></i> Raise Requirement</button></div>
+  <div class="stats"><div class="stat"><i class="fa-solid fa-list-check"></i><div><strong id="reqTotal">95</strong><span>Total Requirements</span></div></div><div class="stat"><i class="fa-regular fa-hourglass-half"></i><div><strong>18</strong><span>Open</span></div></div><div class="stat"><i class="fa-solid fa-circle-check"></i><div><strong>63</strong><span>Closed</span></div></div><div class="stat"><i class="fa-solid fa-pause"></i><div><strong>14</strong><span>On Hold</span></div></div></div>
+  <div class="table-card"><div class="toolbar"><input class="field search" placeholder="Search requirement..." oninput="filterTable('reqTable',this.value)"><select class="field" onchange="filterBySelect('reqTable',2,this.value)"><option value="">All Departments</option><option>App Deck</option><option>HR Team</option><option>Support</option></select><select class="field" onchange="filterBySelect('reqTable',6,this.value)"><option value="">All Status</option><option>Open</option><option>Closed</option><option>On Hold</option></select></div><div class="table-scroll"><table class="data-table" id="reqTable"><thead><tr><th>Req. ID</th><th>Position</th><th>Department</th><th>Location</th><th>Openings</th><th>Created</th><th>Status</th><th>Actions</th></tr></thead><tbody id="reqBody"></tbody></table></div></div>
 </div>
 
 <!-- RECRUITMENT -->
 <div class="page" id="page-recruitment">
-  <div class="module-head"><div><h3>Recruitment</h3><p>Track applicants from application to onboarding</p></div><button class="btn primary" onclick="openModal('candidateModal')"><i class="fa-solid fa-plus"></i> Add Applicant</button></div>
-  <div class="stats"><div class="stat-card"><i class="fa-solid fa-user-group"></i><strong>6</strong><span>Applicants</span></div><div class="stat-card"><i class="fa-solid fa-filter-circle-dollar"></i><strong>4</strong><span>Screening</span></div><div class="stat-card"><i class="fa-solid fa-user-check"></i><strong>3</strong><span>Selected</span></div><div class="stat-card"><i class="fa-solid fa-person-circle-check"></i><strong>3</strong><span>Onboarding</span></div></div>
-  <div class="table-card"><div class="toolbar"><input class="field search" placeholder="Search applicant..." oninput="filterTable('candidateTable',this.value)"><select class="field"><option>All Positions</option><option>Developer</option><option>HR Executive</option><option>Support Engineer</option></select><select class="field"><option>All Stages</option><option>Screening</option><option>Interview</option><option>Selected</option><option>Onboarding</option></select></div>
-  <table class="data-table" id="candidateTable"><thead><tr><th>Applicant</th><th>Position</th><th>Experience</th><th>Applied</th><th>Interview</th><th>Stage</th><th>Actions</th></tr></thead><tbody>
-  <tr><td><div class="person"><div class="avatar">AS</div><div><strong>Arun S</strong><span>arun@email.com</span></div></div></td><td>Full Stack Developer</td><td>4.2 yrs</td><td>20 Sep</td><td>27 Sep</td><td><span class="pill blue">Interview</span></td><td class="actions"><button class="act" onclick="toast('Applicant profile opened')"><i class="fa-regular fa-eye"></i></button><button class="act"><i class="fa-regular fa-pen-to-square"></i></button></td></tr>
-  <tr><td><div class="person"><div class="avatar">PK</div><div><strong>Priya K</strong><span>priya@email.com</span></div></div></td><td>HR Executive</td><td>3.1 yrs</td><td>18 Sep</td><td>25 Sep</td><td><span class="pill green">Selected</span></td><td class="actions"><button class="act"><i class="fa-regular fa-eye"></i></button></td></tr>
-  <tr><td><div class="person"><div class="avatar">RM</div><div><strong>Ravi M</strong><span>ravi@email.com</span></div></div></td><td>Support Engineer</td><td>5.0 yrs</td><td>16 Sep</td><td>—</td><td><span class="pill purple">Onboarding</span></td><td class="actions"><button class="act"><i class="fa-regular fa-eye"></i></button></td></tr>
-  </tbody></table></div>
+  <div class="module-head"><div><h2>Recruitment</h2><p>Track applicants from application to onboarding</p></div><button class="btn primary" onclick="openModal('candidateModal')"><i class="fa-solid fa-plus"></i> Add Applicant</button></div>
+  <div class="stats"><div class="stat"><i class="fa-solid fa-user-group"></i><div><strong>6</strong><span>Applicants</span></div></div><div class="stat"><i class="fa-solid fa-filter"></i><div><strong>4</strong><span>Screening</span></div></div><div class="stat"><i class="fa-solid fa-user-check"></i><div><strong>3</strong><span>Selected</span></div></div><div class="stat"><i class="fa-solid fa-person-circle-check"></i><div><strong>3</strong><span>Onboarding</span></div></div></div>
+  <div class="card"><div class="card-head"><div><div class="card-title">Candidate Pipeline</div><div class="card-sub">Drag candidates between stages</div></div></div><div class="kanban" id="kanban"></div></div>
+  <div class="table-card"><div class="toolbar"><input class="field search" placeholder="Search applicant..." oninput="filterTable('candidateTable',this.value)"><select class="field"><option>All Positions</option><option>Full Stack Developer</option><option>HR Executive</option><option>Support Engineer</option></select></div><div class="table-scroll"><table class="data-table" id="candidateTable"><thead><tr><th>Applicant</th><th>Position</th><th>Experience</th><th>Applied</th><th>Interview</th><th>Stage</th><th>Actions</th></tr></thead><tbody id="candidateBody"></tbody></table></div></div>
 </div>
 
 <!-- EMPLOYEES -->
 <div class="page" id="page-employees">
-  <div class="module-head"><div><h3>Employee Management</h3><p>Employee directory and workforce information</p></div><button class="btn primary" onclick="openModal('employeeModal')"><i class="fa-solid fa-plus"></i> Add Employee</button></div>
-  <div class="stats"><div class="stat-card"><i class="fa-solid fa-users"></i><strong>12</strong><span>Total Employees</span></div><div class="stat-card"><i class="fa-solid fa-user-check"></i><strong>10</strong><span>Active</span></div><div class="stat-card"><i class="fa-solid fa-user-clock"></i><strong>2</strong><span>Probation</span></div><div class="stat-card"><i class="fa-solid fa-building"></i><strong>3</strong><span>Departments</span></div></div>
-  <div class="table-card"><div class="toolbar"><input id="employeeSearch" class="field search" placeholder="Search name, ID, department..." oninput="filterTable('employeeTable',this.value)"><select class="field"><option>All Departments</option><option>App Deck</option><option>HR Team</option><option>Support</option></select><select class="field"><option>All Locations</option><option>Detroit</option><option>Grand Rapids city</option><option>Warren city</option></select><button class="btn" onclick="exportEmployees()"><i class="fa-solid fa-download"></i> Export</button></div>
-  <table class="data-table" id="employeeTable"><thead><tr><th>Employee</th><th>Employee ID</th><th>Department</th><th>Designation</th><th>Location</th><th>Joining Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="employeeBody"></tbody></table>
-  <div class="pagination"><span id="employeeCount">Showing 12 employees</span><div class="pages"><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn">3</button></div></div></div>
+  <div class="module-head"><div><h2>Employee Directory</h2><p>Workforce information, profiles and employment status</p></div><button class="btn primary" onclick="openModal('employeeModal')"><i class="fa-solid fa-plus"></i> Add Employee</button></div>
+  <div class="stats"><div class="stat"><i class="fa-solid fa-users"></i><div><strong id="empCount">12</strong><span>Total Employees</span></div></div><div class="stat"><i class="fa-solid fa-user-check"></i><div><strong>10</strong><span>Active</span></div></div><div class="stat"><i class="fa-solid fa-user-clock"></i><div><strong>2</strong><span>Probation</span></div></div><div class="stat"><i class="fa-solid fa-user-plus"></i><div><strong>3</strong><span>New Joiners</span></div></div></div>
+  <div class="table-card"><div class="toolbar"><input class="field search" placeholder="Search name, ID, email..." oninput="renderEmployees(this.value)"><select class="field" onchange="filterEmployees(3,this.value)"><option value="">All Departments</option><option>App Deck</option><option>HR Team</option><option>Support</option></select><select class="field" onchange="filterEmployees(5,this.value)"><option value="">All Locations</option><option>Detroit</option><option>Grand Rapids city</option><option>Warren city</option></select><select class="field" onchange="filterEmployees(7,this.value)"><option value="">All Status</option><option>Active</option><option>Probation</option></select><button class="btn" onclick="exportTable('employeeTable')"><i class="fa-solid fa-download"></i> Export</button></div><div class="table-scroll"><table class="data-table" id="employeeTable"><thead><tr><th>Employee</th><th>ID</th><th>Department</th><th>Designation</th><th>Email</th><th>Location</th><th>Joining Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="employeeBody"></tbody></table></div><div class="pager"><span id="empShowing">Showing 12 employees</span><div class="page-btns"><button class="active">1</button><button>2</button><button>3</button></div></div></div>
 </div>
 
 <!-- ATTENDANCE -->
 <div class="page" id="page-attendance">
-  <div class="module-head"><div><h3>Attendance</h3><p>Daily employee attendance and attendance history</p></div><button class="btn primary" onclick="toast('Attendance saved successfully')"><i class="fa-solid fa-save"></i> Save Attendance</button></div>
-  <div class="stats"><div class="stat-card"><i class="fa-solid fa-user-check"></i><strong>10</strong><span>Present Today</span></div><div class="stat-card"><i class="fa-solid fa-user-xmark"></i><strong>1</strong><span>Absent</span></div><div class="stat-card"><i class="fa-solid fa-clock"></i><strong>1</strong><span>Late</span></div><div class="stat-card"><i class="fa-solid fa-percent"></i><strong>91.7%</strong><span>Attendance Rate</span></div></div>
-  <div class="card" style="margin-bottom:12px"><div class="toolbar"><input class="field" type="date" value="2026-09-26"><select class="field"><option>All Departments</option><option>App Deck</option><option>HR Team</option><option>Support</option></select><button class="btn" onclick="markAttendance('present')">Mark All Present</button></div></div>
-  <div class="table-card"><table class="data-table"><thead><tr><th>Employee</th><th>Department</th><th>In Time</th><th>Out Time</th><th>Work Hours</th><th>Status</th><th>Action</th></tr></thead><tbody id="attendanceBody"></tbody></table></div>
+  <div class="module-head"><div><h2>Attendance</h2><p>Daily attendance, check-in/out and working hours</p></div><button class="btn primary" onclick="saveAttendance()"><i class="fa-solid fa-floppy-disk"></i> Save Attendance</button></div>
+  <div class="stats"><div class="stat"><i class="fa-solid fa-user-check"></i><div><strong id="presentCount">9</strong><span>Present</span></div></div><div class="stat"><i class="fa-solid fa-user-xmark"></i><div><strong id="absentCount">1</strong><span>Absent</span></div></div><div class="stat"><i class="fa-solid fa-clock"></i><div><strong>1</strong><span>Late</span></div></div><div class="stat"><i class="fa-solid fa-house"></i><div><strong>1</strong><span>On Leave</span></div></div></div>
+  <div class="table-card"><div class="toolbar"><input class="field" type="date" id="attendanceDate"><select class="field"><option>All Departments</option><option>App Deck</option><option>HR Team</option><option>Support</option></select><button class="btn success" onclick="markAllAttendance('Present')"><i class="fa-solid fa-check-double"></i> Mark All Present</button></div><div class="table-scroll"><table class="data-table"><thead><tr><th>Employee</th><th>Date</th><th>Check In</th><th>Check Out</th><th>Working Hours</th><th>Status</th><th>Overtime</th><th>Action</th></tr></thead><tbody id="attendanceBody"></tbody></table></div></div>
 </div>
 
 <!-- LEAVE -->
 <div class="page" id="page-leave">
-  <div class="module-head"><div><h3>Leave Tracker</h3><p>Manage leave requests, balances and approvals</p></div><button class="btn primary" onclick="openModal('leaveModal')"><i class="fa-solid fa-plus"></i> Apply Leave</button></div>
-  <div class="stats"><div class="stat-card"><i class="fa-regular fa-calendar"></i><strong>24</strong><span>Pending Requests</span></div><div class="stat-card"><i class="fa-solid fa-circle-check"></i><strong>42</strong><span>Approved</span></div><div class="stat-card"><i class="fa-solid fa-calendar-xmark"></i><strong>5</strong><span>Rejected</span></div><div class="stat-card"><i class="fa-solid fa-plane"></i><strong>8.5</strong><span>Avg. Leave Balance</span></div></div>
-  <div class="table-card"><div class="toolbar"><input class="field search" placeholder="Search employee..." oninput="filterTable('leaveTable',this.value)"><select class="field"><option>All Status</option><option>Pending</option><option>Approved</option><option>Rejected</option></select></div>
-  <table class="data-table" id="leaveTable"><thead><tr><th>Employee</th><th>Leave Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead><tbody>
-  <tr><td>Arun Kumar</td><td>Casual Leave</td><td>26 Sep</td><td>27 Sep</td><td>2</td><td>Personal</td><td><span class="pill orange">Pending</span></td><td><button class="act" onclick="toast('Leave approved')"><i class="fa-solid fa-check"></i></button></td></tr>
-  <tr><td>Priya Shah</td><td>Earned Leave</td><td>29 Sep</td><td>01 Oct</td><td>3</td><td>Travel</td><td><span class="pill green">Approved</span></td><td><button class="act"><i class="fa-regular fa-eye"></i></button></td></tr>
-  </tbody></table></div>
+  <div class="module-head"><div><h2>Leave Tracker</h2><p>Leave requests, balances and approvals</p></div><button class="btn primary" onclick="openModal('leaveModal')"><i class="fa-solid fa-plus"></i> Apply / Add Leave</button></div>
+  <div class="stats"><div class="stat"><i class="fa-solid fa-inbox"></i><div><strong>8</strong><span>Pending Requests</span></div></div><div class="stat"><i class="fa-solid fa-calendar-check"></i><div><strong>24</strong><span>Approved</span></div></div><div class="stat"><i class="fa-solid fa-calendar-xmark"></i><div><strong>3</strong><span>Rejected</span></div></div><div class="stat"><i class="fa-solid fa-chart-pie"></i><div><strong>68%</strong><span>Leave Utilization</span></div></div></div>
+  <div class="table-card"><div class="toolbar"><input class="field search" placeholder="Search employee..." oninput="filterTable('leaveTable',this.value)"><select class="field"><option>All Leave Types</option><option>Casual Leave</option><option>Sick Leave</option><option>Earned Leave</option><option>Loss of Pay</option></select><select class="field"><option>All Status</option><option>Pending</option><option>Approved</option><option>Rejected</option></select></div><div class="table-scroll"><table class="data-table" id="leaveTable"><thead><tr><th>Employee</th><th>Leave Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead><tbody id="leaveBody"></tbody></table></div></div>
 </div>
 
 <!-- TIME -->
 <div class="page" id="page-time">
-  <div class="module-head"><div><h3>Time Tracker</h3><p>Monitor working hours and timesheets</p></div><button class="btn primary" onclick="toast('Timesheet submitted')"><i class="fa-solid fa-paper-plane"></i> Submit Timesheet</button></div>
-  <div class="stats"><div class="stat-card"><i class="fa-regular fa-clock"></i><strong>86h 40m</strong><span>Total Hours This Week</span></div><div class="stat-card"><i class="fa-solid fa-business-time"></i><strong>7h 13m</strong><span>Avg. Daily Hours</span></div><div class="stat-card"><i class="fa-solid fa-user-clock"></i><strong>6</strong><span>Overtime Entries</span></div><div class="stat-card"><i class="fa-solid fa-hourglass-half"></i><strong>3</strong><span>Pending Timesheets</span></div></div>
-  <div class="grid-equal"><div class="card"><div class="card-head"><div class="card-title">Weekly Work Hours</div></div><div class="chart-wrap"><canvas id="timeChart"></canvas></div></div><div class="card"><div class="card-head"><div class="card-title">Current Timer</div></div><div style="text-align:center;padding:30px"><div style="font-size:32px;font-weight:700;color:#3b82f6" id="timer">07:13:42</div><p style="font-size:9px;color:#9299a2;margin:7px">Working since 09:02 AM</p><button class="btn danger" onclick="toast('Timer stopped')"><i class="fa-solid fa-stop"></i> Stop Timer</button></div></div></div>
+  <div class="module-head"><div><h2>Time Tracker</h2><p>Working hours, timesheets and overtime</p></div><button class="btn primary" onclick="toast('Timesheet entry added','success')"><i class="fa-solid fa-plus"></i> Add Timesheet</button></div>
+  <div class="stats"><div class="stat"><i class="fa-regular fa-clock"></i><div><strong>87.5h</strong><span>Total This Week</span></div></div><div class="stat"><i class="fa-solid fa-business-time"></i><div><strong>8.2h</strong><span>Daily Average</span></div></div><div class="stat"><i class="fa-solid fa-stopwatch"></i><div><strong>6.5h</strong><span>Overtime</span></div></div><div class="stat"><i class="fa-solid fa-circle-check"></i><div><strong>96%</strong><span>Timesheet Completion</span></div></div></div>
+  <div class="card"><div class="card-head"><div><div class="card-title">Weekly Work Hours</div></div></div><div class="chart"><canvas id="timeChart"></canvas></div></div>
+  <div class="table-card"><div class="toolbar"><input class="field" type="week"><select class="field"><option>All Employees</option><option>Arun Kumar</option><option>Priya Shah</option></select></div><div class="table-scroll"><table class="data-table"><thead><tr><th>Employee</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Total</th><th>Status</th></tr></thead><tbody id="timeBody"></tbody></table></div></div>
 </div>
 
 <!-- APPRAISAL -->
 <div class="page" id="page-appraisal">
-  <div class="module-head"><div><h3>Appraisal</h3><p>Performance reviews and employee evaluations</p></div><button class="btn primary" onclick="openModal('appraisalModal')"><i class="fa-solid fa-plus"></i> Start Appraisal</button></div>
-  <div class="stats"><div class="stat-card"><i class="fa-solid fa-star"></i><strong>12</strong><span>Employees in Cycle</span></div><div class="stat-card"><i class="fa-solid fa-check"></i><strong>7</strong><span>Completed</span></div><div class="stat-card"><i class="fa-solid fa-hourglass"></i><strong>5</strong><span>Pending Review</span></div><div class="stat-card"><i class="fa-solid fa-chart-line"></i><strong>82%</strong><span>Avg. Score</span></div></div>
-  <div class="table-card"><table class="data-table"><thead><tr><th>Employee</th><th>Department</th><th>Review Period</th><th>Goal Completion</th><th>Score</th><th>Reviewer</th><th>Status</th></tr></thead><tbody>
-  <tr><td>Arun Kumar</td><td>App Deck</td><td>Apr–Sep 2026</td><td><div style="width:100px"><div class="progress"><i style="width:92%"></i></div></div></td><td><strong>4.6 / 5</strong></td><td>Manager A</td><td><span class="pill green">Completed</span></td></tr>
-  <tr><td>Priya Shah</td><td>HR Team</td><td>Apr–Sep 2026</td><td><div style="width:100px"><div class="progress"><i style="width:76%"></i></div></div></td><td><strong>4.0 / 5</strong></td><td>Manager B</td><td><span class="pill orange">Pending</span></td></tr>
-  </tbody></table></div>
+  <div class="module-head"><div><h2>Appraisal</h2><p>Goals, KPIs and performance reviews</p></div><button class="btn primary" onclick="openModal('appraisalModal')"><i class="fa-solid fa-star"></i> Start Appraisal</button></div>
+  <div class="stats"><div class="stat"><i class="fa-solid fa-users"></i><div><strong>12</strong><span>Employees Reviewed</span></div></div><div class="stat"><i class="fa-solid fa-bullseye"></i><div><strong>42</strong><span>Goals</span></div></div><div class="stat"><i class="fa-solid fa-chart-line"></i><div><strong>78%</strong><span>Goal Completion</span></div></div><div class="stat"><i class="fa-solid fa-medal"></i><div><strong>4.2/5</strong><span>Avg. Rating</span></div></div></div>
+  <div class="card"><div class="card-head"><div class="card-title">Performance Overview</div></div><div class="chart"><canvas id="performanceChart"></canvas></div></div>
+  <div class="table-card"><div class="table-scroll"><table class="data-table"><thead><tr><th>Employee</th><th>Department</th><th>Goals</th><th>Completed</th><th>Rating</th><th>Review Status</th><th>Actions</th></tr></thead><tbody id="appraisalBody"></tbody></table></div></div>
 </div>
 
 <!-- ANNOUNCEMENT -->
 <div class="page" id="page-announcement">
-  <div class="module-head"><div><h3>Announcements</h3><p>Company-wide communication and notices</p></div><button class="btn primary" onclick="openModal('announcementModal')"><i class="fa-solid fa-plus"></i> New Announcement</button></div>
+  <div class="module-head"><div><h2>Announcement</h2><p>Company communication and employee notices</p></div><button class="btn primary" onclick="openModal('announcementModal')"><i class="fa-solid fa-plus"></i> New Announcement</button></div>
   <div id="announcementList"></div>
 </div>
 
 <!-- RESIGNATION -->
 <div class="page" id="page-resignation">
-  <div class="module-head"><div><h3>Resignation</h3><p>Manage employee resignation and exit workflow</p></div><button class="btn primary" onclick="openModal('resignationModal')"><i class="fa-solid fa-plus"></i> Record Resignation</button></div>
-  <div class="stats"><div class="stat-card"><i class="fa-solid fa-person-walking-arrow-right"></i><strong>3</strong><span>Active Resignations</span></div><div class="stat-card"><i class="fa-solid fa-calendar-day"></i><strong>2</strong><span>Exits This Month</span></div><div class="stat-card"><i class="fa-solid fa-list-check"></i><strong>7</strong><span>Clearance Pending</span></div><div class="stat-card"><i class="fa-solid fa-box-archive"></i><strong>18</strong><span>Completed Exits</span></div></div>
-  <div class="table-card"><table class="data-table"><thead><tr><th>Employee</th><th>Department</th><th>Resignation Date</th><th>Last Working Day</th><th>Notice Period</th><th>Clearance</th><th>Status</th></tr></thead><tbody>
-  <tr><td>Vijay R</td><td>Support</td><td>10 Sep 2026</td><td>10 Dec 2026</td><td>90 days</td><td>4 / 6</td><td><span class="pill orange">In Progress</span></td></tr>
-  <tr><td>Meena K</td><td>HR Team</td><td>03 Sep 2026</td><td>02 Oct 2026</td><td>30 days</td><td>6 / 6</td><td><span class="pill green">Clearance Done</span></td></tr>
-  </tbody></table></div>
+  <div class="module-head"><div><h2>Resignation</h2><p>Employee exit and clearance workflow</p></div><button class="btn primary" onclick="openModal('resignationModal')"><i class="fa-solid fa-plus"></i> Record Resignation</button></div>
+  <div class="stats"><div class="stat"><i class="fa-solid fa-person-walking-arrow-right"></i><div><strong>3</strong><span>Submitted</span></div></div><div class="stat"><i class="fa-solid fa-hourglass-half"></i><div><strong>2</strong><span>Notice Period</span></div></div><div class="stat"><i class="fa-solid fa-clipboard-check"></i><div><strong>1</strong><span>Clearance Pending</span></div></div><div class="stat"><i class="fa-solid fa-door-open"></i><div><strong>4</strong><span>Exited YTD</span></div></div></div>
+  <div class="table-card"><div class="table-scroll"><table class="data-table"><thead><tr><th>Employee</th><th>Resignation Date</th><th>Last Working Day</th><th>Notice Period</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead><tbody id="resignationBody"></tbody></table></div></div>
 </div>
 
 <!-- SETTINGS -->
 <div class="page" id="page-settings">
-  <div class="module-head"><div><h3>Settings</h3><p>Configure HRMS application preferences</p></div><button class="btn primary" onclick="toast('Settings saved')">Save Settings</button></div>
-  <div class="grid-equal"><div class="card"><div class="card-head"><div class="card-title">Application Settings</div></div><div class="list">
-    <div class="list-item"><span>Email notifications</span><button class="btn success" onclick="toggleSetting(this)">Enabled</button></div>
-    <div class="list-item"><span>Approval reminders</span><button class="btn success" onclick="toggleSetting(this)">Enabled</button></div>
-    <div class="list-item"><span>Two-factor authentication</span><button class="btn" onclick="toggleSetting(this)">Disabled</button></div>
-    <div class="list-item"><span>Audit logging</span><button class="btn success" onclick="toggleSetting(this)">Enabled</button></div>
-  </div></div>
-  <div class="card"><div class="card-head"><div class="card-title">Organization</div></div><div class="form-grid">
-    <div class="form-group"><label>Organization Name</label><input class="form-control" value="PeopleFlow Technologies"></div><div class="form-group"><label>Default Location</label><input class="form-control" value="Chennai"></div>
-    <div class="form-group"><label>Working Hours</label><input class="form-control" value="09:00 AM – 06:00 PM"></div><div class="form-group"><label>Timezone</label><select class="form-control"><option>Asia/Kolkata (IST)</option></select></div>
-  </div></div></div>
+  <div class="module-head"><div><h2>Settings</h2><p>HRMS application configuration and preferences</p></div><button class="btn primary" onclick="toast('Settings saved','success')"><i class="fa-solid fa-save"></i> Save Settings</button></div>
+  <div class="grid-main">
+    <div class="card"><div class="card-head"><div class="card-title">Application Settings</div></div><div class="form-grid"><div class="form-group"><label>Application Name</label><input class="form-control" value="PeoplePulse HRMS"></div><div class="form-group"><label>Default Time Zone</label><select class="form-control"><option>Asia/Kolkata (IST)</option><option>UTC</option></select></div><div class="form-group"><label>Default Currency</label><select class="form-control"><option>INR — Indian Rupee</option><option>USD — US Dollar</option></select></div><div class="form-group"><label>Fiscal Year</label><select class="form-control"><option>April – March</option><option>January – December</option></select></div></div></div>
+    <div class="card"><div class="card-head"><div class="card-title">Preferences</div></div><div class="list-row"><div class="grow"><div class="person-name">Email Notifications</div><div class="person-meta">Send HR workflow notifications</div></div><button class="btn success">ON</button></div><div class="list-row"><div class="grow"><div class="person-name">Attendance Reminders</div><div class="person-meta">Notify employees who forget check-in</div></div><button class="btn success">ON</button></div><div class="list-row"><div class="grow"><div class="person-name">Approval Alerts</div><div class="person-meta">Notify managers about pending approvals</div></div><button class="btn">OFF</button></div></div>
+  </div>
 </div>
-
 </section>
 </main>
+</div>
 
 <!-- MODALS -->
-<div class="overlay" id="employeeModal"><div class="modal"><div class="modal-head"><h3>Add Employee</h3><button class="close" onclick="closeModal('employeeModal')">×</button></div><div class="form-grid">
-<div class="form-group"><label>First Name</label><input id="efirst" class="form-control" placeholder="First name"></div><div class="form-group"><label>Last Name</label><input id="elast" class="form-control" placeholder="Last name"></div>
-<div class="form-group"><label>Employee ID</label><input class="form-control" placeholder="EMP-0013"></div><div class="form-group"><label>Email</label><input class="form-control" type="email" placeholder="employee@email.com"></div>
-<div class="form-group"><label>Department</label><select class="form-control"><option>App Deck</option><option>HR Team</option><option>Support</option></select></div><div class="form-group"><label>Designation</label><input class="form-control" placeholder="Designation"></div>
-<div class="form-group"><label>Location</label><select class="form-control"><option>Detroit</option><option>Grand Rapids city</option><option>Warren city</option></select></div><div class="form-group"><label>Joining Date</label><input class="form-control" type="date"></div>
-</div><div class="modal-footer"><button class="btn" onclick="closeModal('employeeModal')">Cancel</button><button class="btn primary" onclick="addEmployee()">Add Employee</button></div></div></div>
+<div class="overlay" id="employeeModal"><div class="modal"><div class="modal-head"><h3>Add Employee</h3><button class="close" onclick="closeModal('employeeModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="form-group"><label>First Name *</label><input class="form-control" id="efirst" required></div><div class="form-group"><label>Last Name *</label><input class="form-control" id="elast" required></div><div class="form-group"><label>Employee ID *</label><input class="form-control" id="eid" placeholder="EMP-0014"></div><div class="form-group"><label>Email *</label><input class="form-control" id="eemail" type="email"></div><div class="form-group"><label>Department</label><select class="form-control" id="edept"><option>App Deck</option><option>HR Team</option><option>Support</option></select></div><div class="form-group"><label>Designation</label><input class="form-control" id="edesig"></div><div class="form-group"><label>Location</label><input class="form-control" id="eloc" value="Chennai"></div><div class="form-group"><label>Joining Date</label><input class="form-control" id="ejoin" type="date"></div><div class="form-group"><label>Status</label><select class="form-control" id="estatus"><option>Active</option><option>Probation</option></select></div><div class="form-group"><label>Phone</label><input class="form-control" id="ephone"></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('employeeModal')">Cancel</button><button class="btn primary" onclick="saveEmployee()">Save Employee</button></div></div></div>
 
-<div class="overlay" id="candidateModal"><div class="modal"><div class="modal-head"><h3>Add Applicant</h3><button class="close" onclick="closeModal('candidateModal')">×</button></div><div class="form-grid"><div class="form-group"><label>Name</label><input class="form-control" placeholder="Applicant name"></div><div class="form-group"><label>Email</label><input class="form-control" type="email"></div><div class="form-group"><label>Position</label><input class="form-control" placeholder="Position"></div><div class="form-group"><label>Experience</label><input class="form-control" placeholder="Years"></div></div><div class="modal-footer"><button class="btn" onclick="closeModal('candidateModal')">Cancel</button><button class="btn primary" onclick="closeModal('candidateModal');toast('Applicant added')">Add Applicant</button></div></div></div>
+<div class="overlay" id="requirementModal"><div class="modal"><div class="modal-head"><h3>Raise Requirement</h3><button class="close" onclick="closeModal('requirementModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="form-group"><label>Position *</label><input class="form-control" id="rposition"></div><div class="form-group"><label>Department</label><select class="form-control" id="rdept"><option>App Deck</option><option>HR Team</option><option>Support</option></select></div><div class="form-group"><label>Location</label><input class="form-control" id="rloc" value="Chennai"></div><div class="form-group"><label>Openings</label><input class="form-control" id="ropen" type="number" value="1"></div><div class="form-group"><label>Priority</label><select class="form-control" id="rpriority"><option>Normal</option><option>High</option><option>Urgent</option></select></div><div class="form-group"><label>Required By</label><input class="form-control" id="rdate" type="date"></div><div class="form-group full"><label>Notes</label><textarea class="form-control" id="rnotes" placeholder="Role requirements..."></textarea></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('requirementModal')">Cancel</button><button class="btn primary" onclick="saveRequirement()">Raise Requirement</button></div></div></div>
 
-<div class="overlay" id="requirementModal"><div class="modal"><div class="modal-head"><h3>Raise Requirement</h3><button class="close" onclick="closeModal('requirementModal')">×</button></div><div class="form-grid"><div class="form-group"><label>Position</label><input class="form-control" placeholder="Position"></div><div class="form-group"><label>Openings</label><input class="form-control" type="number" value="1"></div><div class="form-group"><label>Department</label><select class="form-control"><option>App Deck</option><option>HR Team</option><option>Support</option></select></div><div class="form-group"><label>Location</label><input class="form-control" placeholder="Location"></div></div><div class="modal-footer"><button class="btn" onclick="closeModal('requirementModal')">Cancel</button><button class="btn primary" onclick="closeModal('requirementModal');toast('Requirement raised successfully')">Raise Requirement</button></div></div></div>
+<div class="overlay" id="candidateModal"><div class="modal"><div class="modal-head"><h3>Add Applicant</h3><button class="close" onclick="closeModal('candidateModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="form-group"><label>Applicant Name *</label><input class="form-control" id="cname"></div><div class="form-group"><label>Email</label><input class="form-control" id="cemail" type="email"></div><div class="form-group"><label>Position</label><input class="form-control" id="cposition"></div><div class="form-group"><label>Experience</label><input class="form-control" id="cexp" placeholder="3 years"></div><div class="form-group"><label>Stage</label><select class="form-control" id="cstage"><option>Applied</option><option>Screening</option><option>Interview</option><option>Selected</option><option>Onboarding</option></select></div><div class="form-group"><label>Interview Date</label><input class="form-control" id="cinterview" type="date"></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('candidateModal')">Cancel</button><button class="btn primary" onclick="saveCandidate()">Save Applicant</button></div></div></div>
 
-<div class="overlay" id="leaveModal"><div class="modal"><div class="modal-head"><h3>Apply Leave</h3><button class="close" onclick="closeModal('leaveModal')">×</button></div><div class="form-grid"><div class="form-group"><label>Employee</label><select class="form-control"><option>Arun Kumar</option><option>Priya Shah</option></select></div><div class="form-group"><label>Leave Type</label><select class="form-control"><option>Casual Leave</option><option>Earned Leave</option><option>Sick Leave</option></select></div><div class="form-group"><label>From</label><input class="form-control" type="date"></div><div class="form-group"><label>To</label><input class="form-control" type="date"></div></div><div class="modal-footer"><button class="btn" onclick="closeModal('leaveModal')">Cancel</button><button class="btn primary" onclick="closeModal('leaveModal');toast('Leave request submitted')">Submit Request</button></div></div></div>
+<div class="overlay" id="leaveModal"><div class="modal"><div class="modal-head"><h3>Leave Request</h3><button class="close" onclick="closeModal('leaveModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="form-group"><label>Employee</label><select class="form-control" id="lEmployee"></select></div><div class="form-group"><label>Leave Type</label><select class="form-control" id="lType"><option>Casual Leave</option><option>Sick Leave</option><option>Earned Leave</option><option>Comp Off</option><option>Loss of Pay</option></select></div><div class="form-group"><label>From</label><input class="form-control" id="lFrom" type="date"></div><div class="form-group"><label>To</label><input class="form-control" id="lTo" type="date"></div><div class="form-group full"><label>Reason</label><textarea class="form-control" id="lReason"></textarea></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('leaveModal')">Cancel</button><button class="btn primary" onclick="saveLeave()">Submit Request</button></div></div></div>
 
-<div class="overlay" id="announcementModal"><div class="modal"><div class="modal-head"><h3>New Announcement</h3><button class="close" onclick="closeModal('announcementModal')">×</button></div><div class="form-grid"><div class="form-group" style="grid-column:1/-1"><label>Title</label><input class="form-control" placeholder="Announcement title"></div><div class="form-group"><label>Audience</label><select class="form-control"><option>All Employees</option><option>HR Team</option><option>App Deck</option></select></div><div class="form-group"><label>Priority</label><select class="form-control"><option>General</option><option>Important</option><option>Urgent</option></select></div></div><div class="modal-footer"><button class="btn" onclick="closeModal('announcementModal')">Cancel</button><button class="btn primary" onclick="closeModal('announcementModal');toast('Announcement published')">Publish</button></div></div></div>
+<div class="overlay" id="announcementModal"><div class="modal"><div class="modal-head"><h3>New Announcement</h3><button class="close" onclick="closeModal('announcementModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="form-group full"><label>Title *</label><input class="form-control" id="annTitle"></div><div class="form-group"><label>Audience</label><select class="form-control" id="annAudience"><option>All Employees</option><option>HR Team</option><option>App Deck</option><option>Support</option></select></div><div class="form-group"><label>Priority</label><select class="form-control" id="annPriority"><option>General</option><option>Important</option><option>Urgent</option></select></div><div class="form-group full"><label>Message</label><textarea class="form-control" id="annContent"></textarea></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('announcementModal')">Cancel</button><button class="btn primary" onclick="saveAnnouncement()">Publish</button></div></div></div>
 
-<div class="overlay" id="resignationModal"><div class="modal"><div class="modal-head"><h3>Record Resignation</h3><button class="close" onclick="closeModal('resignationModal')">×</button></div><div class="form-grid"><div class="form-group"><label>Employee</label><select class="form-control"><option>Vijay R</option><option>Meena K</option></select></div><div class="form-group"><label>Resignation Date</label><input class="form-control" type="date"></div><div class="form-group"><label>Last Working Day</label><input class="form-control" type="date"></div><div class="form-group"><label>Notice Period</label><input class="form-control" value="90 days"></div></div><div class="modal-footer"><button class="btn" onclick="closeModal('resignationModal')">Cancel</button><button class="btn primary" onclick="closeModal('resignationModal');toast('Resignation recorded')">Save</button></div></div></div>
+<div class="overlay" id="resignationModal"><div class="modal"><div class="modal-head"><h3>Record Resignation</h3><button class="close" onclick="closeModal('resignationModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="form-group"><label>Employee</label><select class="form-control" id="resEmployee"></select></div><div class="form-group"><label>Resignation Date</label><input class="form-control" id="resDate" type="date"></div><div class="form-group"><label>Last Working Day</label><input class="form-control" id="resLast" type="date"></div><div class="form-group"><label>Notice Period</label><input class="form-control" id="resNotice" value="90 days"></div><div class="form-group full"><label>Reason</label><textarea class="form-control" id="resReason"></textarea></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('resignationModal')">Cancel</button><button class="btn primary" onclick="saveResignation()">Save</button></div></div></div>
 
-<div class="overlay" id="appraisalModal"><div class="modal"><div class="modal-head"><h3>Start Appraisal</h3><button class="close" onclick="closeModal('appraisalModal')">×</button></div><div class="form-grid"><div class="form-group"><label>Employee</label><select class="form-control"><option>Arun Kumar</option><option>Priya Shah</option></select></div><div class="form-group"><label>Review Period</label><input class="form-control" value="Apr–Sep 2026"></div></div><div class="modal-footer"><button class="btn" onclick="closeModal('appraisalModal')">Cancel</button><button class="btn primary" onclick="closeModal('appraisalModal');toast('Appraisal cycle started')">Start Appraisal</button></div></div></div>
+<div class="overlay" id="appraisalModal"><div class="modal"><div class="modal-head"><h3>Start Appraisal</h3><button class="close" onclick="closeModal('appraisalModal')">×</button></div><div class="modal-body"><div class="form-grid"><div class="form-group"><label>Employee</label><select class="form-control" id="appEmployee"></select></div><div class="form-group"><label>Review Period</label><input class="form-control" id="appPeriod" value="Apr–Sep 2026"></div></div></div><div class="modal-foot"><button class="btn" onclick="closeModal('appraisalModal')">Cancel</button><button class="btn primary" onclick="closeModal('appraisalModal');toast('Appraisal cycle started','success')">Start Appraisal</button></div></div></div>
 
 <div class="toast" id="toastBox"></div>
 
-<script>
-const pageMeta={
- dashboard:['Admin Dashboard','Overview of Human Resource Management'],
- profile:['Profile','Manage your employee profile'],
- requirements:['Requirement Raising','Manpower requirements and approvals'],
- recruitment:['Recruitment','Applicant pipeline and onboarding'],
- employees:['Employee','Employee directory and workforce information'],
- attendance:['Attendance','Daily employee attendance'],
- leave:['Leave Tracker','Leave requests and balances'],
- time:['Time Tracker','Working hours and timesheets'],
- appraisal:['Appraisal','Employee performance reviews'],
- announcement:['Announcement','Company communication and notices'],
- resignation:['Resignation','Employee exit and clearance workflow'],
- settings:['Settings','HRMS application configuration']
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+/* SAME FIREBASE PROJECT CONFIG USED BY THE EXISTING HRMS/AUTH WORKFLOW */
+const firebaseConfig = {
+  apiKey: "AIzaSyDDew880iGDPpx2giFC9RXDV6SN2m99cUk",
+  authDomain: "otp-login-app-2f5d5.firebaseapp.com",
+  projectId: "otp-login-app-2f5d5",
+  storageBucket: "otp-login-app-2f5d5.firebasestorage.app",
+  messagingSenderId: "660933750433",
+  appId: "1:660933750433:web:dacff67b6c6fae6264cae0"
 };
+
+let db=null, auth=null, firebaseReady=false;
+try{
+  const app=initializeApp(firebaseConfig);
+  db=getFirestore(app); auth=getAuth(app); firebaseReady=true;
+  onAuthStateChanged(auth,u=>{ window.currentUser=u||null; });
+  window.fbAdd=async(col,data)=>addDoc(collection(db,col),{...data,createdAt:new Date().toISOString()});
+  window.fbUpdate=async(col,id,data)=>updateDoc(doc(db,col,id),data);
+  window.fbDelete=async(col,id)=>deleteDoc(doc(db,col,id));
+  window.fbGet=async col=>getDocs(collection(db,col));
+  window.fbWatch=(col,cb)=>onSnapshot(collection(db,col),snap=>cb(snap.docs.map(d=>({id:d.id,...d.data()}))));
+}catch(e){console.warn("Firebase unavailable; demo data remains active.",e);}
+
+window.firebaseReady=firebaseReady;
+window.db=db;
+</script>
+
+<script>
+"use strict";
+const pageMeta={
+ dashboard:["Admin Dashboard","Overview of Human Resource Management"],
+ profile:["Profile","Manage your employee profile and account details"],
+ requirements:["Requirement Raising","Create and manage manpower requirements"],
+ recruitment:["Recruitment","Track applicants from application to onboarding"],
+ employees:["Employee Directory","Workforce information and employee profiles"],
+ attendance:["Attendance","Daily attendance, check-in/out and working hours"],
+ leave:["Leave Tracker","Leave requests, balances and approvals"],
+ time:["Time Tracker","Working hours, timesheets and overtime"],
+ appraisal:["Appraisal","Goals, KPIs and performance reviews"],
+ announcement:["Announcement","Company communication and employee notices"],
+ resignation:["Resignation","Employee exit and clearance workflow"],
+ settings:["Settings","HRMS application configuration"]
+};
+
+const demo={
+ employees:[
+  ["Arun Kumar","AK","EMP-0002","App Deck","Full Stack Developer","arun@company.com","Detroit","08 Jan 2024","Active"],
+  ["Priya Shah","PS","EMP-0003","HR Team","HR Executive","priya@company.com","Grand Rapids city","14 Feb 2024","Active"],
+  ["Ravi Menon","RM","EMP-0004","Support","Support Engineer","ravi@company.com","Warren city","02 Mar 2024","Active"],
+  ["Meena K","MK","EMP-0005","HR Team","HR Associate","meena@company.com","Detroit","11 Apr 2024","Active"],
+  ["Vijay R","VR","EMP-0006","Support","Support Lead","vijay@company.com","Warren city","19 May 2024","Probation"],
+  ["Divya S","DS","EMP-0007","App Deck","UI Developer","divya@company.com","Detroit","04 Jun 2024","Active"],
+  ["Karthik P","KP","EMP-0008","App Deck","Backend Developer","karthik@company.com","Grand Rapids city","17 Jul 2024","Active"],
+  ["Nisha T","NT","EMP-0009","HR Team","Recruiter","nisha@company.com","Warren city","23 Aug 2024","Active"],
+  ["Suresh B","SB","EMP-0010","Support","Technical Analyst","suresh@company.com","Detroit","09 Sep 2024","Active"],
+  ["Anitha R","AR","EMP-0011","App Deck","QA Engineer","anitha@company.com","Grand Rapids city","15 Oct 2024","Active"],
+  ["Manoj V","MV","EMP-0012","Support","System Engineer","manoj@company.com","Warren city","21 Nov 2024","Probation"],
+  ["Swetha M","SM","EMP-0013","App Deck","Software Engineer","swetha@company.com","Detroit","03 Dec 2024","Active"]
+ ],
+ requirements:[
+  ["REQ-0095","Full Stack Developer","App Deck","Detroit","2","24 Sep 2026","Open"],
+  ["REQ-0094","HR Executive","HR Team","Warren city","1","22 Sep 2026","On Hold"],
+  ["REQ-0093","Support Engineer","Support","Grand Rapids city","3","20 Sep 2026","Closed"]
+ ],
+ applicants:[
+  ["Arun S","arun.s@email.com","Full Stack Developer","4 years","24 Sep 2026","Interview","26 Sep 2026"],
+  ["Meera P","meera.p@email.com","HR Executive","3 years","23 Sep 2026","Screening",""],
+  ["Kiran R","kiran.r@email.com","Support Engineer","5 years","21 Sep 2026","Selected","25 Sep 2026"],
+  ["Naveen K","naveen.k@email.com","Full Stack Developer","2 years","20 Sep 2026","Applied",""],
+  ["Divya M","divya.m@email.com","UI Developer","3 years","18 Sep 2026","Onboarding",""],
+  ["Sanjay V","sanjay.v@email.com","Support Engineer","4 years","17 Sep 2026","Screening",""]
+ ],
+ leaves:[
+  ["Priya Shah","Casual Leave","26 Sep 2026","27 Sep 2026","2","Personal work","Pending"],
+  ["Arun Kumar","Sick Leave","25 Sep 2026","25 Sep 2026","1","Medical appointment","Approved"],
+  ["Ravi Menon","Earned Leave","30 Sep 2026","02 Oct 2026","3","Family function","Approved"],
+  ["Meena K","Casual Leave","03 Oct 2026","03 Oct 2026","1","Personal","Rejected"]
+ ],
+ announcements:[
+  ["Quarterly Town Hall","All Employees","Important","28 Sep 2026","Join the quarterly business and people update session.","Admin Principal"],
+  ["Open Enrollment Window","All Employees","General","01 Oct 2026","Benefits enrollment window will open next week.","HR Team"],
+  ["System Maintenance","All Employees","Urgent","04 Oct 2026","HRMS maintenance is scheduled for Sunday.","IT Team"]
+ ],
+ resignations:[
+  ["Vijay R","15 Sep 2026","13 Dec 2026","90 days","Career transition","Notice Period"],
+  ["Meena K","10 Sep 2026","09 Dec 2026","90 days","Personal reasons","Clearance Pending"]
+ ]
+};
+
+let employees=demo.employees.map((x,i)=>({id:"demo-"+i,name:x[0],initials:x[1],empId:x[2],dept:x[3],designation:x[4],email:x[5],location:x[6],joining:x[7],status:x[8]}));
+let requirements=demo.requirements.map(x=>({reqId:x[0],position:x[1],dept:x[2],location:x[3],openings:x[4],created:x[5],status:x[6]}));
+let applicants=demo.applicants.map((x,i)=>({id:"a"+i,name:x[0],email:x[1],position:x[2],experience:x[3],applied:x[4],stage:x[5],interview:x[6]}));
+let leaves=demo.leaves.map(x=>({employee:x[0],type:x[1],from:x[2],to:x[3],days:x[4],reason:x[5],status:x[6]}));
+let announcements=demo.announcements.map(x=>({title:x[0],audience:x[1],priority:x[2],date:x[3],content:x[4],author:x[5]}));
+let resignations=demo.resignations.map(x=>({employee:x[0],date:x[1],last:x[2],notice:x[3],reason:x[4],status:x[5]}));
 let charts={};
 
-const employees=[
-['Arun Kumar','AK','EMP-0002','App Deck','Full Stack Developer','Detroit','08 Jan 2024','Active'],
-['Priya Shah','PS','EMP-0003','HR Team','HR Executive','Grand Rapids city','14 Feb 2024','Active'],
-['Ravi Menon','RM','EMP-0004','Support','Support Engineer','Warren city','02 Mar 2024','Active'],
-['Meena K','MK','EMP-0005','HR Team','HR Associate','Detroit','11 Apr 2024','Active'],
-['Vijay R','VR','EMP-0006','Support','Support Lead','Warren city','19 May 2024','Active'],
-['Divya S','DS','EMP-0007','App Deck','UI Developer','Detroit','04 Jun 2024','Probation'],
-['Karthik P','KP','EMP-0008','App Deck','Backend Developer','Grand Rapids city','17 Jul 2024','Active'],
-['Nisha T','NT','EMP-0009','HR Team','Recruiter','Warren city','23 Aug 2024','Active'],
-['Suresh B','SB','EMP-0010','Support','Technical Analyst','Detroit','09 Sep 2024','Active'],
-['Anitha R','AR','EMP-0011','App Deck','QA Engineer','Grand Rapids city','15 Oct 2024','Active'],
-['Manoj V','MV','EMP-0012','Support','System Engineer','Warren city','21 Nov 2024','Probation'],
-['Swetha M','SM','EMP-0013','App Deck','Software Engineer','Detroit','03 Dec 2024','Active']
-];
-
+function $(id){return document.getElementById(id)}
 function showPage(id,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  if(el) el.classList.add('active');
-  document.getElementById('pageTitle').textContent=pageMeta[id][0];
-  document.getElementById('pageSub').textContent=pageMeta[id][1];
-  if(innerWidth<761) document.getElementById('sidebar').classList.remove('open');
-  if(id==='employees') renderEmployees();
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ $("page-"+id).classList.add("active");
+ document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+ if(el)el.classList.add("active");
+ $("pageTitle").textContent=pageMeta[id][0];$("pageSub").textContent=pageMeta[id][1];
+ if(innerWidth<801)$("sidebar").classList.remove("open");
+ if(id==="employees")renderEmployees();
+ if(id==="requirements")renderRequirements();
+ if(id==="recruitment"){renderCandidates();renderKanban();}
+ if(id==="leave")renderLeaves();
+ if(id==="announcement")renderAnnouncements();
+ if(id==="resignation")renderResignations();
 }
-function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
-function openModal(id){document.getElementById(id).classList.add('open')}
-function closeModal(id){document.getElementById(id).classList.remove('open')}
-document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')}));
+function toggleSidebar(){$("sidebar").classList.toggle("open")}
+function openModal(id){$(id).classList.add("open");document.body.style.overflow="hidden";populateEmployeeSelects()}
+function closeModal(id){$(id).classList.remove("open");document.body.style.overflow=""}
+document.querySelectorAll(".overlay").forEach(o=>o.addEventListener("click",e=>{if(e.target===o)closeModal(o.id)}));
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){document.querySelectorAll(".overlay.open").forEach(o=>closeModal(o.id));$("sidebar").classList.remove("open")}});
 
-function toast(msg){
- const t=document.getElementById('toastBox');t.textContent=msg;t.classList.add('show');
- clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+function toast(msg,type="success"){
+ const box=$("toastBox");box.className="toast "+type;box.innerHTML=`<i class="fa-solid fa-${type==="success"?"circle-check":type==="error"?"circle-xmark":"circle-info"}"></i>${msg}`;box.style.display="flex";clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>box.style.display="none",3000);
 }
-function filterTable(id,q){q=q.toLowerCase();document.querySelectorAll('#'+id+' tbody tr').forEach(r=>r.style.display=r.innerText.toLowerCase().includes(q)?'':'none')}
-function renderEmployees(){
- document.getElementById('employeeBody').innerHTML=employees.map(e=>`<tr>
- <td><div class="person"><div class="avatar">${e[1]}</div><div><strong>${e[0]}</strong><span>${e[2]}</span></div></div></td>
- <td>${e[2]}</td><td>${e[3]}</td><td>${e[4]}</td><td>${e[5]}</td><td>${e[6]}</td>
- <td><span class="pill ${e[7]==='Active'?'green':'orange'}">${e[7]}</span></td>
- <td class="actions"><button class="act" onclick="toast('Viewing ${e[0]}')"><i class="fa-regular fa-eye"></i></button><button class="act" onclick="toast('Edit mode opened')"><i class="fa-regular fa-pen-to-square"></i></button></td></tr>`).join('');
+function toggleTheme(){document.body.classList.toggle("theme-dark");localStorage.setItem("hrmsTheme",document.body.classList.contains("theme-dark")?"dark":"light")}
+if(localStorage.getItem("hrmsTheme")==="dark")document.body.classList.add("theme-dark");
+
+function animateCounters(){document.querySelectorAll("[data-count]").forEach(el=>{const target=+el.dataset.count;let n=0;const step=Math.max(1,Math.ceil(target/35));const t=setInterval(()=>{n+=step;if(n>=target){n=target;clearInterval(t)}el.textContent=n.toLocaleString()},25)})}
+
+function makeCharts(){
+ const common={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},animation:{duration:900,easing:"easeOutQuart"},scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:"#edf0f3"},ticks:{font:{size:9},stepSize:2},beginAtZero:true}}};
+ charts.deptChart=new Chart($("deptChart"),{type:"bar",data:{labels:["App Deck","HR Team","Support"],datasets:[{data:[6,3,3],backgroundColor:["#68a9ef","#73b0f0","#77aef0"],borderRadius:1,barThickness:56}]},options:common});
+ charts.locationChart=new Chart($("locationChart"),{type:"doughnut",data:{labels:["Detroit","Grand Rapids city","Warren city"],datasets:[{data:[4,4,4],backgroundColor:["#ef7070","#b7df85","#68a5ee"],borderWidth:3,borderColor:"#fff"}]},options:{responsive:true,maintainAspectRatio:false,cutout:"58%",plugins:{legend:{position:"right",labels:{font:{size:8},boxWidth:8,padding:7}}},animation:{duration:1000}}});
+ charts.movementChart=new Chart($("movementChart"),{type:"bar",data:{labels:["Apr","May","Jun","Jul","Aug","Sep"],datasets:[{label:"Joined",data:[2,3,4,2,5,3],backgroundColor:"#a9d878",borderRadius:2},{label:"Resigned",data:[1,1,2,1,2,1],backgroundColor:"#ef7b7b",borderRadius:2}]},options:{...common,plugins:{legend:{display:true,position:"right",labels:{font:{size:9},boxWidth:10}}}}});
+ charts.timeChart=new Chart($("timeChart"),{type:"line",data:{labels:["Mon","Tue","Wed","Thu","Fri"],datasets:[{label:"Hours",data:[8.1,8.5,7.8,9.2,8.4],borderColor:"#4f9cf9",backgroundColor:"rgba(79,156,249,.08)",fill:true,tension:.35,pointRadius:3}]},options:{...common,plugins:{legend:{display:false}}}});
+ charts.performanceChart=new Chart($("performanceChart"),{type:"bar",data:{labels:["Engineering","HR","Support","Finance","Sales"],datasets:[{data:[82,88,76,84,91],backgroundColor:"#6ca8ec",borderRadius:3}]},options:{...common,scales:{...common.scales,y:{...common.scales.y,max:100}}}});
 }
-function addEmployee(){
- const first=document.getElementById('efirst').value.trim()||'New',last=document.getElementById('elast').value.trim()||'Employee';
- employees.push([first+' '+last,(first[0]+last[0]).toUpperCase(),'EMP-'+String(employees.length+1).padStart(4,'0'),'App Deck','New Employee','Detroit','26 Sep 2026','Probation']);
- renderEmployees();closeModal('employeeModal');toast('Employee added successfully');
+function resetChart(id){if(charts[id]){charts[id].reset();charts[id].update();toast("Chart refreshed","info")}}
+function sortDepartmentChart(){if(!charts.deptChart)return;const d=charts.deptChart.data;const pairs=d.labels.map((l,i)=>[l,d.datasets[0].data[i]]).sort((a,b)=>b[1]-a[1]);d.labels=pairs.map(x=>x[0]);d.datasets[0].data=pairs.map(x=>x[1]);charts.deptChart.update();toast("Department chart sorted","info")}
+
+function renderDashboardLists(){
+ $("activityTimeline").innerHTML=[
+  ["Employee joined","Arun Kumar joined App Deck","Today · 09:42 AM"],
+  ["Leave approved","Arun Kumar — Sick Leave","Today · 09:10 AM"],
+  ["Profile updated","Priya Shah updated contact details","Yesterday · 04:35 PM"],
+  ["Attendance marked","12 employee attendance records","Yesterday · 09:05 AM"],
+  ["Payroll processed","Monthly payroll processing completed","24 Sep · 06:12 PM"],
+  ["Resignation submitted","Vijay R submitted resignation","22 Sep · 03:20 PM"]
+ ].map(x=>`<div class="event"><b>${x[0]}</b> — ${x[1]}<span>${x[2]}</span></div>`).join("");
+ $("eventsList").innerHTML=[
+  ["fa-cake-candles","Priya Shah","Birthday · 29 Sep","purple"],
+  ["fa-award","Arun Kumar","Work anniversary · 08 Oct","blue"],
+  ["fa-calendar-days","Gandhi Jayanti","Holiday · 02 Oct","orange"],
+  ["fa-handshake","HR Review Meeting","Meeting · 03 Oct","green"]
+ ].map(x=>`<div class="list-row"><div class="avatar" style="background:${x[3]==="purple"?"#8c72e8":x[3]==="orange"?"#f2ad42":x[3]==="green"?"#2dbf75":"#4f9cf9"}><i class="fa-solid ${x[0]}"></i></div><div class="grow"><div class="person-name">${x[1]}</div><div class="person-meta">${x[2]}</div></div></div>`).join("");
+ $("pipelineList").innerHTML=[["Applied",1,"blue"],["Screening",2,"orange"],["Interview",1,"purple"],["Selected",1,"green"],["Onboarding",1,"blue"]].map(x=>`<div class="list-row"><div class="grow"><div class="person-name">${x[0]}</div></div><span class="status s-${x[2]}">${x[1]} candidate${x[1]>1?"s":""}</span></div>`).join("");
+ $("recentEmployees").innerHTML=employees.slice(-4).reverse().map(e=>`<div class="list-row"><div class="avatar">${e.initials}</div><div class="grow"><div class="person-name">${e.name}</div><div class="person-meta">${e.designation} · ${e.dept}</div></div><span class="pill ${e.status==="Active"?"green":"orange"}">${e.status}</span></div>`).join("");
 }
-function exportEmployees(){
- const csv=['Name,Employee ID,Department,Designation,Location,Joining Date,Status',...employees.map(e=>e[0]+','+e[2]+','+e[3]+','+e[4]+','+e[5]+','+e[6]+','+e[7])].join('\\n');
- const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='employees.csv';a.click();toast('Employee CSV exported');
+
+function renderRequirements(data=requirements){
+ $("reqBody").innerHTML=data.map(r=>`<tr><td><b>${r.reqId}</b></td><td>${r.position}</td><td>${r.dept}</td><td>${r.location}</td><td>${r.openings}</td><td>${r.created}</td><td><span class="pill ${r.status==="Open"?"blue":r.status==="Closed"?"green":"orange"}">${r.status}</span></td><td class="actions"><button class="act" onclick="toast('Requirement ${r.reqId} opened','info')"><i class="fa-regular fa-eye"></i></button></td></tr>`).join("");
 }
-function toggleSetting(btn){const on=btn.textContent.trim()==='Enabled';btn.textContent=on?'Disabled':'Enabled';btn.className='btn '+(on?'':'success')}
-function markAttendance(status){document.querySelectorAll('#attendanceBody .pill').forEach(p=>{p.textContent=status==='present'?'Present':'Absent';p.className='pill '+(status==='present'?'green':'red')});toast('Attendance updated')}
-function refreshChart(c){if(c){c.reset();c.update();toast('Chart refreshed')}}
-function sortChart(c){if(c){c.data.labels=[...c.data.labels].reverse();c.data.datasets.forEach(d=>d.data=[...d.data].reverse());c.update();}}
-function initCharts(){
- Chart.defaults.font.family='Inter';Chart.defaults.font.size=9;Chart.defaults.color='#78818b';
- charts.dept=new Chart(document.getElementById('deptChart'),{type:'bar',data:{labels:['App Deck','HR Team','Support'],datasets:[{label:'Employees',data:[6,3,3],backgroundColor:'#69a4ed',borderRadius:0,barThickness:72}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:2},grid:{color:'#edf0f4'}},x:{grid:{display:false},title:{display:true,text:'Department',font:{size:9}}}}}});
- charts.location=new Chart(document.getElementById('locationChart'),{type:'pie',data:{labels:['Detroit','Grand Rapids city','Warren city'],datasets:[{data:[4,4,4],backgroundColor:['#ef6b6b','#b6dc88','#5d9bea'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
- charts.join=new Chart(document.getElementById('joinChart'),{type:'bar',data:{labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep'],datasets:[{label:'Joined',data:[1,2,1,4,2,3,1,2,3],backgroundColor:'#b9df8b',borderRadius:0},{label:'Resigned',data:[0,1,0,1,0,1,0,1,2],backgroundColor:'#ef6b6b',borderRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',align:'end',labels:{boxWidth:8,font:{size:8}}}},scales:{y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'#edf0f4'}},x:{grid:{display:false}}}}});
- charts.time=new Chart(document.getElementById('timeChart'),{type:'line',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat'],datasets:[{label:'Hours',data:[8.1,7.6,8.4,7.9,8.3,4.2],borderColor:'#5d9bea',backgroundColor:'rgba(93,155,234,.1)',fill:true,tension:.35,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:10,grid:{color:'#edf0f4'}},x:{grid:{display:false}}}}});
- window.deptChart=charts.dept;window.locationChart=charts.location;window.joinChart=charts.join;
+function renderCandidates(data=applicants){
+ $("candidateBody").innerHTML=data.map((a,i)=>`<tr><td><div class="person"><div class="avatar">${a.name.split(" ").map(x=>x[0]).join("").slice(0,2)}</div><div><b>${a.name}</b><small>${a.email}</small></div></div></td><td>${a.position}</td><td>${a.experience}</td><td>${a.applied}</td><td>${a.interview||"—"}</td><td><span class="pill ${a.stage==="Selected"||a.stage==="Onboarding"?"green":a.stage==="Interview"?"orange":"blue"}">${a.stage}</span></td><td><button class="act" onclick="toast('Applicant profile opened','info')"><i class="fa-regular fa-eye"></i></button><button class="act" onclick="toast('Applicant moved to next stage','success')"><i class="fa-solid fa-arrow-right"></i></button></td></tr>`).join("");
 }
-function fillDynamic(){
- document.getElementById('pipelineList').innerHTML=[['Requirements','95','blue'],['Applicants','6','purple'],['Selected','3','green'],['Onboarding','3','orange']].map(x=>`<div class="list-item"><span>${x[0]}</span><span class="pill ${x[2]}">${x[1]}</span></div>`).join('');
- document.getElementById('recentEmployees').innerHTML=employees.slice(0,4).map(e=>`<div class="list-item"><div class="person"><div class="avatar">${e[1]}</div><div><strong>${e[0]}</strong><span>${e[4]}</span></div></div><span class="pill green">${e[7]}</span></div>`).join('');
- document.getElementById('attendanceBody').innerHTML=employees.slice(0,8).map((e,i)=>`<tr><td><div class="person"><div class="avatar">${e[1]}</div><div><strong>${e[0]}</strong><span>${e[2]}</span></div></div></td><td>${e[3]}</td><td>${i%3===0?'09:15 AM':'08:'+(45+i)+' AM'}</td><td>06:00 PM</td><td>${i%3===0?'8h 45m':'9h 00m'}</td><td><span class="pill ${i===2?'orange':i===6?'red':'green'}">${i===2?'Late':i===6?'Absent':'Present'}</span></td><td><button class="act" onclick="toast('Attendance details opened')"><i class="fa-regular fa-eye"></i></button></td></tr>`).join('');
- document.getElementById('announcementList').innerHTML=[
- ['Payroll Processing','Payroll for September will be processed on 30 September 2026.','2 hours ago','general'],
- ['Holiday Notice','The office will remain closed on the upcoming public holiday.','Yesterday','event'],
- ['Mandatory Compliance Training','Please complete the assigned compliance training before the deadline.','2 days ago','urgent']
- ].map(a=>`<div class="card" style="margin-bottom:9px;border-left:3px solid ${a[3]==='urgent'?'#ef4444':a[3]==='event'?'#3b82f6':'#22c55e'}"><div class="card-head"><div><div class="card-title">${a[0]}</div><div style="font-size:8px;color:#9aa1aa;margin-top:3px">${a[2]}</div></div><span class="pill ${a[3]==='urgent'?'red':a[3]==='event'?'blue':'green'}">${a[3]}</span></div><p style="font-size:9px;color:#68717c">${a[1]}</p></div>`).join('');
+function renderKanban(){
+ const stages=["Applied","Screening","Interview","Selected","Onboarding"];
+ $("kanban").innerHTML=stages.map(stage=>`<div class="kan-col" ondragover="event.preventDefault()" ondrop="dropCandidate(event,'${stage}')"><div class="kan-head"><span>${stage}</span><span class="pill gray">${applicants.filter(a=>a.stage===stage).length}</span></div>${applicants.filter(a=>a.stage===stage).map((a,i)=>`<div class="candidate" draggable="true" ondragstart="dragCandidate(event,${applicants.indexOf(a)})"><strong>${a.name}</strong><span>${a.position}</span><span>${a.experience}</span></div>`).join("")||'<div class="empty">No candidates</div>'}</div>`).join("");
 }
-document.addEventListener('DOMContentLoaded',()=>{fillDynamic();renderEmployees();initCharts()});
+let dragIndex=null;function dragCandidate(e,i){dragIndex=i;e.dataTransfer.setData("text/plain",i)}function dropCandidate(e,stage){const i=+e.dataTransfer.getData("text/plain");if(!Number.isNaN(i)&&applicants[i]){applicants[i].stage=stage;renderCandidates();renderKanban();toast(`Candidate moved to ${stage}`,"success")}}
+
+function renderEmployees(queryText=""){
+ let list=employees.filter(e=>!queryText||Object.values(e).join(" ").toLowerCase().includes(queryText.toLowerCase()));
+ $("employeeBody").innerHTML=list.map((e,i)=>`<tr><td><div class="person"><div class="avatar">${e.initials}</div><div><b>${e.name}</b><small>${e.email}</small></div></div></td><td>${e.empId}</td><td>${e.dept}</td><td>${e.designation}</td><td>${e.email}</td><td>${e.location}</td><td>${e.joining}</td><td><span class="pill ${e.status==="Active"?"green":"orange"}">${e.status}</span></td><td><button class="act" onclick="toast('Viewing ${e.name}','info')"><i class="fa-regular fa-eye"></i></button><button class="act" onclick="toast('Edit mode opened','info')"><i class="fa-solid fa-pen"></i></button><button class="act" onclick="deleteEmployee(${i})"><i class="fa-regular fa-trash-can"></i></button></td></tr>`).join("");
+ $("empCount").textContent=list.length;$("empShowing").textContent=`Showing ${list.length} employee${list.length===1?"":"s"}`;
+}
+function filterEmployees(col,val){let rows=[...document.querySelectorAll("#employeeBody tr")];rows.forEach(r=>{r.style.display=!val||r.children[col].textContent.trim()===val?"":"none"})}
+function deleteEmployee(i){if(confirm("Deactivate this employee record?")){employees.splice(i,1);renderEmployees();toast("Employee deactivated","error")}}
+function renderAttendance(){const data=employees.slice(0,10);$("attendanceBody").innerHTML=data.map((e,i)=>`<tr><td><div class="person"><div class="avatar">${e.initials}</div><b>${e.name}</b></div></td><td>26 Sep 2026</td><td>${i===1?"09:18":"09:0"+(i%6)}</td><td>${i===0?"18:12":"18:0"+(i%5)}</td><td>${(7.8+(i%4)*.3).toFixed(1)}h</td><td><span class="pill ${i===2?"orange":i===5?"red":"green"}">${i===2?"Late":i===5?"Absent":"Present"}</span></td><td>${i%3===0?"0.5h":"—"}</td><td><button class="act" onclick="toast('Attendance correction opened','info')"><i class="fa-solid fa-pen"></i></button></td></tr>`).join("")}
+function markAllAttendance(){toast("All visible employees marked Present","success");renderAttendance()}
+function saveAttendance(){toast("Attendance saved to HRMS","success")}
+function renderLeaves(data=leaves){$("leaveBody").innerHTML=data.map((l,i)=>`<tr><td><b>${l.employee}</b></td><td>${l.type}</td><td>${l.from}</td><td>${l.to}</td><td>${l.days}</td><td>${l.reason}</td><td><span class="pill ${l.status==="Approved"?"green":l.status==="Rejected"?"red":"orange"}">${l.status}</span></td><td><button class="act" onclick="approveLeave(${i})"><i class="fa-solid fa-check"></i></button><button class="act" onclick="rejectLeave(${i})"><i class="fa-solid fa-xmark"></i></button></td></tr>`).join("")}
+function approveLeave(i){leaves[i].status="Approved";renderLeaves();toast("Leave approved","success")}
+function rejectLeave(i){leaves[i].status="Rejected";renderLeaves();toast("Leave rejected","error")}
+function renderTime(){ $("timeBody").innerHTML=employees.slice(0,6).map((e,i)=>{const vals=[8.1,8.5,7.8,9.2,8.4].map((v,j)=>(v+(i%3)*.1).toFixed(1));return `<tr><td><b>${e.name}</b></td>${vals.map(v=>`<td>${v}h</td>`).join("")}<td><b>${vals.reduce((a,b)=>a+parseFloat(b),0).toFixed(1)}h</b></td><td><span class="pill green">Complete</span></td></tr>`}).join("")}
+function renderAppraisal(){ $("appraisalBody").innerHTML=employees.slice(0,7).map((e,i)=>`<tr><td><b>${e.name}</b></td><td>${e.dept}</td><td>5</td><td>${i%2?4:5}</td><td><b>${(3.8+(i%5)*.2).toFixed(1)}/5</b></td><td><span class="pill ${i<4?"green":"orange"}">${i<4?"Completed":"Pending"}</span></td><td><button class="act" onclick="toast('Review opened','info')"><i class="fa-regular fa-eye"></i></button></td></tr>`).join("")}
+function renderAnnouncements(){ $("announcementList").innerHTML=announcements.map((a,i)=>`<div class="card" style="border-left:4px solid ${a.priority==="Urgent"?"#ed6a6a":a.priority==="Important"?"#f2ad42":"#4f9cf9"}"><div class="card-head"><div><div class="card-title">${a.title}</div><div class="card-sub">${a.date} · ${a.author} · ${a.audience}</div></div><span class="pill ${a.priority==="Urgent"?"red":a.priority==="Important"?"orange":"blue"}">${a.priority}</span></div><div style="font-size:10px;color:#5e6974;line-height:1.6">${a.content}</div><div style="margin-top:10px"><button class="btn" onclick="deleteAnnouncement(${i})"><i class="fa-regular fa-trash-can"></i> Delete</button></div></div>`).join("")}
+function deleteAnnouncement(i){if(confirm("Delete announcement?")){announcements.splice(i,1);renderAnnouncements();toast("Announcement deleted","error")}}
+function renderResignations(){ $("resignationBody").innerHTML=resignations.map((r,i)=>`<tr><td><b>${r.employee}</b></td><td>${r.date}</td><td>${r.last}</td><td>${r.notice}</td><td>${r.reason}</td><td><span class="pill ${r.status==="Clearance Pending"?"orange":"blue"}">${r.status}</span></td><td><button class="act" onclick="toast('Exit checklist opened','info')"><i class="fa-solid fa-list-check"></i></button></td></tr>`).join("")}
+
+function filterTable(id,q){const table=$(id);if(!table)return;table.querySelectorAll("tbody tr").forEach(tr=>tr.style.display=tr.textContent.toLowerCase().includes(q.toLowerCase())?"":"none")}
+function filterBySelect(id,col,val){const table=$(id);table.querySelectorAll("tbody tr").forEach(tr=>tr.style.display=!val||tr.children[col].textContent.trim()===val?"":"none")}
+function exportTable(id){const table=$(id);if(!table){toast("Nothing to export","error");return}let csv=[...table.querySelectorAll("tr")].map(r=>[...r.children].map(c=>`"${c.innerText.replace(/"/g,'""')}"`).join(",")).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download=id+".csv";a.click();URL.revokeObjectURL(a.href);toast("CSV exported","success")}
+
+async function saveEmployee(){
+ const name=($("efirst").value+" "+$("elast").value).trim(), empId=$("eid").value.trim(), email=$("eemail").value.trim();
+ if(!name||!empId||!email){toast("Please fill required employee fields","error");return}
+ const obj={name,initials:name.split(" ").map(x=>x[0]).join("").slice(0,2).toUpperCase(),empId,dept:$("edept").value,designation:$("edesig").value||"Employee",email,location:$("eloc").value||"Chennai",joining:$("ejoin").value||"26 Sep 2026",status:$("estatus").value};
+ employees.unshift({...obj,id:"local-"+Date.now()});renderEmployees();closeModal("employeeModal");toast("Employee added successfully","success");
+ if(window.firebaseReady){try{await window.fbAdd("employees",obj)}catch(e){console.warn(e);toast("Saved locally; check Firestore rules","info")}}
+}
+async function saveRequirement(){
+ const position=$("rposition").value.trim();if(!position){toast("Position is required","error");return}
+ const obj={reqId:"REQ-"+String(96+requirements.length).padStart(4,"0"),position,dept:$("rdept").value,location:$("rloc").value,openings:$("ropen").value,created:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}),status:"Open",priority:$("rpriority").value,notes:$("rnotes").value};
+ requirements.unshift(obj);renderRequirements();closeModal("requirementModal");toast("Requirement raised successfully","success");
+ if(window.firebaseReady){try{await window.fbAdd("requirements",obj)}catch(e){console.warn(e)}}
+}
+async function saveCandidate(){
+ const name=$("cname").value.trim();if(!name){toast("Applicant name is required","error");return}
+ const obj={name,email:$("cemail").value,position:$("cposition").value||"General Position",experience:$("cexp").value||"Not specified",applied:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}),stage:$("cstage").value,interview:$("cinterview").value};
+ applicants.unshift({...obj,id:"local-"+Date.now()});renderCandidates();renderKanban();closeModal("candidateModal");toast("Applicant added","success");
+ if(window.firebaseReady){try{await window.fbAdd("applicants",obj)}catch(e){console.warn(e)}}
+}
+function populateEmployeeSelects(){
+ const opts=employees.map(e=>`<option>${e.name}</option>`).join("");["lEmployee","resEmployee","appEmployee"].forEach(id=>{if($(id))$(id).innerHTML=opts});
+}
+async function saveLeave(){
+ const employee=$("lEmployee").value,from=$("lFrom").value,to=$("lTo").value;if(!from||!to){toast("Please select leave dates","error");return}
+ const days=Math.max(1,Math.round((new Date(to)-new Date(from))/86400000)+1),obj={employee,type:$("lType").value,from,to,days,reason:$("lReason").value,status:"Pending"};leaves.unshift(obj);renderLeaves();closeModal("leaveModal");toast("Leave request submitted","success");if(window.firebaseReady){try{await window.fbAdd("leaves",obj)}catch(e){console.warn(e)}}
+}
+async function saveAnnouncement(){
+ const title=$("annTitle").value.trim(),content=$("annContent").value.trim();if(!title||!content){toast("Title and message are required","error");return}
+ const obj={title,audience:$("annAudience").value,priority:$("annPriority").value,date:new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}),content,author:"Admin Principal"};announcements.unshift(obj);renderAnnouncements();closeModal("announcementModal");toast("Announcement published","success");if(window.firebaseReady){try{await window.fbAdd("announcements",obj)}catch(e){console.warn(e)}}
+}
+async function saveResignation(){
+ const obj={employee:$("resEmployee").value,date:$("resDate").value||new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}),last:$("resLast").value||"To be confirmed",notice:$("resNotice").value,reason:$("resReason").value||"Not specified",status:"Notice Period"};resignations.unshift(obj);renderResignations();closeModal("resignationModal");toast("Resignation recorded","success");if(window.firebaseReady){try{await window.fbAdd("resignations",obj)}catch(e){console.warn(e)}}
+}
+
+function setupFirebaseWatchers(){
+ if(!window.firebaseReady||!window.fbWatch)return;
+ const safe=(fn)=>(data)=>{try{fn(data)}catch(e){console.warn(e)}};
+ window.fbWatch("employees",safe(data=>{if(data.length){employees=data.map((e,i)=>({...e,id:e.id,initials:e.initials||e.name.split(" ").map(x=>x[0]).join("").slice(0,2).toUpperCase()}));renderEmployees();renderDashboardLists()}}));
+ window.fbWatch("requirements",safe(data=>{if(data.length){requirements=data;renderRequirements()}}));
+ window.fbWatch("applicants",safe(data=>{if(data.length){applicants=data;renderCandidates();renderKanban()}}));
+ window.fbWatch("leaves",safe(data=>{if(data.length){leaves=data;renderLeaves()}}));
+ window.fbWatch("announcements",safe(data=>{if(data.length){announcements=data;renderAnnouncements()}}));
+ window.fbWatch("resignations",safe(data=>{if(data.length){resignations=data;renderResignations()}}));
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+ animateCounters();makeCharts();renderDashboardLists();renderRequirements();renderCandidates();renderKanban();renderEmployees();renderAttendance();renderLeaves();renderTime();renderAppraisal();renderAnnouncements();renderResignations();populateEmployeeSelects();setupFirebaseWatchers();
+ $("attendanceDate").value=new Date().toISOString().slice(0,10);
+ $("globalSearch").addEventListener("input",e=>{const q=e.target.value.trim();if(q){showPage("employees",document.querySelectorAll(".nav-item")[4]);renderEmployees(q)}});
+});
 </script>
 </body>
 </html>
